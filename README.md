@@ -18,13 +18,13 @@ mkdir -p ~/.config && cp -r nvim ~/.config/ && cp .tmux.conf ~/
 
 Install tmux plugins:
 ```
-tmux new -s misc
+tmux
 <tmux prefix - ctrl + a with these .tmux.conf> + I
 ```
 
 Install vim packet manager and sync packets:
 ```
-vim /.config/nvim/lua/olle/packer.lua
+vim ~/.config/nvim/lua/olle/packer.lua
 :so
 :PackerSync
 ```
