@@ -3,6 +3,7 @@ Prerequisites:
 * tmux
   * A font that supports the symbols used in tmux powerline ([nerd fonts](https://github.com/ryanoasis/nerd-fonts) works)
   * [tpm - tmux packet manger](https://github.com/tmux-plugins/tpm)   
+  * xclip
 * neovim
   * [Neovim packet manager](https://github.com/wbthomason/packer.nvim)
 * ripgrep

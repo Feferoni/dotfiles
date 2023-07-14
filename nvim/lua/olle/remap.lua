@@ -5,6 +5,9 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
+-- 
+vim.keymap.set("n", "<F3>", ":set wrap!<cr>", { noremap = true, silent = true })
+
 -- Move selected block, auto indent if moved to inside a if block
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -62,6 +65,11 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
 -- uses telescope to check references
 vim.keymap.set('n', 'fr', function() require('telescope.builtin').lsp_references({ noremap = true, silent = true }) end)
+
+vim.keymap.set("i", "<M-.>", "copilot#Next()", {expr=true, silent=true})
+vim.keymap.set("i", "<M-,>", "copilot#Previous()", {expr=true, silent=true})
+vim.keymap.set("i", "<M-->", "copilot#Dismiss()", {expr=true, silent=true})
+vim.keymap.set("i", "<M-m>", "copilot#Suggest()", {expr=true, silent=true})
 
 -- source object?
 vim.keymap.set("n", "<leader><leader>", function()
