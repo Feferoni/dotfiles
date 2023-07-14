@@ -5,6 +5,7 @@ Common prerequisites:
 * git
 * [fzf](https://github.com/junegunn/fzf)
 * ripgrep
+* nodejs
 
 ## Tmux
 Prerequisites:
@@ -34,6 +35,8 @@ tmux
 Prerequisites:
 * [Neovim](https://github.com/neovim/neovim) 
 * [Neovim packet manager](https://github.com/wbthomason/packer.nvim)
+* yarn, nodejs (for markdown preview)
+    * [Markdown preview repo, follow the packer install instructions here if you don't want to use yarn or nodejs](https://github.com/iamcco/markdown-preview.nvim)
 
 Download the neovim packet managers:
 ```
