@@ -1,6 +1,9 @@
 # Config dotfiles and environment setup
 If any of the prerequisites doesn't work, see if you got a old version and replace that with the latest and greatest.
 
+Language prerequisites:
+* go
+
 Common prerequisites:
 * git
 * [fzf](https://github.com/junegunn/fzf)
@@ -52,6 +55,10 @@ cp -r nvim/ ~/.config/
 mkdir -p ~/.config
 ln -s $PWD/nvim/ ~/.config/
 ```
+Make sure that go delve (go debugger) is installed:
+```
+go install github.com/go-delve/delve/cmd/dlv@latest
+```
 
 Install vim packet manager and sync packets:
 ```
@@ -74,5 +81,8 @@ ln -s $PWD/.zshrc ~/
 ```
 
 ## Color for terminal emulator
+### Linux
 [Gogh, follow their instructions on how to install and switch color profiles](https://github.com/Gogh-Co/Gogh)
 
+### WSL
+[Cattpucin theme, follow instructions in link to get the theme](https://github.com/catppuccin/windows-terminal)
