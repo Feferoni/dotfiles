@@ -19,10 +19,10 @@ lsp.nvim_workspace()
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<A-e>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<A-d>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<A-k>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<A-j>'] = cmp.mapping.select_next_item(cmp_select),
     ['<A-a>'] = cmp.mapping.confirm({ select = true }),
-    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<A-s>"] = cmp.mapping.complete(),
 })
 
 cmp_mappings['<Tab>'] = nil
@@ -41,12 +41,6 @@ lsp.set_preferences({
         info = 'I'
     }
 })
-
--- Diagnostic keymaps
-vim.keymap.set('n', 'gp', vim.diagnostic.goto_prev)
-vim.keymap.set('n', 'gn', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
