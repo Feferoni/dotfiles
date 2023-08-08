@@ -21,7 +21,8 @@ vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+-- deletes the currently marked thing, and puts it into void register. Keeping the old copy buffer after the delete
+vim.keymap.set({"n", "v" }, "<leader>d", [["_d]])
 
 -- does nothing 
 vim.keymap.set("n", "Q", "<nop>")

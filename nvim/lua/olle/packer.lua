@@ -29,6 +29,7 @@ return require('packer').startup(function(use)
 
     -- code completions / lsp / snippets / etc
     use "github/copilot.vim"
+    use('p00f/clangd_extensions.nvim')
     use {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v2.x',
