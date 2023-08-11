@@ -26,9 +26,12 @@ return require('packer').startup(function(use)
     use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate' })
     use('nvim-treesitter/playground')
     use('tpope/vim-commentary')
+    use('nvim-tree/nvim-web-devicons')
 
     -- code completions / lsp / snippets / etc
     use "github/copilot.vim"
+    use('p00f/clangd_extensions.nvim')
+    use('cohama/lexima.vim')
     use {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v2.x',

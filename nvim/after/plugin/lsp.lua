@@ -5,7 +5,6 @@ lsp.preset({})
 
 lsp.ensure_installed({
     'rust_analyzer',
-    'clangd',
     'gopls',
     'pyright',
     'bashls',
@@ -15,14 +14,13 @@ lsp.ensure_installed({
 -- Fix Undefined global 'vim'
 lsp.nvim_workspace()
 
-
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<A-e>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<A-d>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<A-k>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<A-j>'] = cmp.mapping.select_next_item(cmp_select),
     ['<A-a>'] = cmp.mapping.confirm({ select = true }),
-    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<A-s>"] = cmp.mapping.complete(),
 })
 
 cmp_mappings['<Tab>'] = nil
@@ -42,11 +40,21 @@ lsp.set_preferences({
     }
 })
 
--- Diagnostic keymaps
-vim.keymap.set('n', 'gp', vim.diagnostic.goto_prev)
-vim.keymap.set('n', 'gn', vim.diagnostic.goto_next)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+require('lspconfig').clangd.setup({
+    cmd = {
+        "clangd",
+        "-j=10",
+        "--background-index",
+        "--all-scopes-completion",
+        "--header-insertion=never",
+        "--recovery-ast",
+        "--pch-storage=disk",
+        "--suggest-missing-include",
+        "--log=info",
+        "--clang-tidy",
+        "--enable-config",
+    },
+})
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
@@ -68,9 +76,9 @@ lsp.on_attach(function(_, bufnr)
     nmap('rn', vim.lsp.buf.rename, '[R]e[n]ame')
     nmap('ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
     nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    nmap('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
 
     nmap('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('<leader>gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
     nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
     nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
     nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
@@ -85,6 +93,11 @@ lsp.on_attach(function(_, bufnr)
         print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, '[W]orkspace [L]ist Folders')
 
+    require("clangd_extensions.inlay_hints").setup_autocmd()
+    require("clangd_extensions.inlay_hints").set_inlay_hints()
+    nmap('<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
+    nmap('<leader>th', '<cmd>ClangdSwitchSourceHeader<cr>', '[T]oggle between [H]eader and source')
+
     -- Create a command `:Format` local to the LSP buffer
     vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
         if vim.lsp.buf.format then
@@ -96,6 +109,7 @@ lsp.on_attach(function(_, bufnr)
 end)
 
 lsp.setup()
+
 
 vim.diagnostic.config({
     virtual_text = true
