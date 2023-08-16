@@ -3,7 +3,6 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
 -- Toggle wrap lines
 vim.keymap.set("n", "<F6>", ":set wrap!<cr>", { noremap = true, silent = true })
-vim.keymap.set('n', '<CR>', "<cmd>nohl<CR>", { noremap = true, silent = true })
 vim.keymap.set('n', '<esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
 
 -- Move selected block, auto indent if moved to inside a if block
