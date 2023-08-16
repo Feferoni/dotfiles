@@ -4,7 +4,7 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 -- Toggle wrap lines
 vim.keymap.set("n", "<F6>", ":set wrap!<cr>", { noremap = true, silent = true })
 vim.keymap.set('n', '<CR>', "<cmd>nohl<CR>", { noremap = true, silent = true })
-vim.keymap.set('n', '<esc><esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
+vim.keymap.set('n', '<esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
 
 -- Move selected block, auto indent if moved to inside a if block
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -21,8 +21,11 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- leader y to paste into the copy clipboard
--- vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]]) -- for linux
-vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>") -- for wsl 
+if require("olle.wsl_check").is_wsl() then
+    vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>")
+else
+    vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
+end
 
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
@@ -57,6 +60,7 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 
 -- replace word your on
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+vim.keymap.set("n", "<leader>S", [[:%s/\<<C-r><C-W>\>/<C-r><C-W>/gI<Left><Left><Left>]])
 -- makes current file executable 
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc='turn file into executable'})
 

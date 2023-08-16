@@ -82,4 +82,7 @@ return require('packer').startup(function(use)
             vim.cmd('colorscheme catppuccin')
         end
     })
+
+    use('Feferoni/build-system.nvim')
 end)
+
