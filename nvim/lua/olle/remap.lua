@@ -76,4 +76,3 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
     vim.print("Resourced file")
 end)
-

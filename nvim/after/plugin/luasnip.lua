@@ -1,11 +1,6 @@
 local ls = require('luasnip')
 local types = require('luasnip.util.types')
 
--- if vim.g.snippets ~= "luasnip" then
---     return
--- end
-
-
 ls.config.set_config {
     -- this tells luasnip to remember to keep around the last snippet.
     -- You can jump back into it even if you move outside of the selection
@@ -65,19 +60,6 @@ local parse = require("luasnip.util.parser").parse_snippet
 local ms = ls.multi_snippet
 local k = require("luasnip.nodes.key_indexer").new_key
 
-local rule_of_five_str = [[
-class {}
-{
-public:
-    {}() = default;
-    ~{}() = default;
-    {}(const ${}& other) = delete;
-    {}& operator=(const {}& other) = delete;
-    {}(${}&& other) noexcept = default;
-    {}& operator=(${}&& other) noexcept = default;
-};
-]]
-
 ls.add_snippets("all", {
     s("class_5",
         fmt([[
@@ -95,7 +77,7 @@ ls.add_snippets("all", {
     private:
     }};
     ]], { i(1, "className"), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1) })),
-    s("mockClass",
+    s("class_mock",
         fmt([[
     #include <gmock.h>
 
