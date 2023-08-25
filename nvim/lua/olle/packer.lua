@@ -46,12 +46,28 @@ return require('packer').startup(function(use)
             },
             { 'williamboman/mason-lspconfig.nvim' }, -- Optional
 
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },     -- Required
-            { 'hrsh7th/cmp-nvim-lsp' }, -- Required
-            { 'L3MON4D3/LuaSnip' },     -- Required
         }
     }
+    -- Autocompletion
+    use {
+        'hrsh7th/nvim-cmp',
+        config = function()
+            require 'cmp'.setup {
+                snippet = {
+                    expand = function(args)
+                        require 'luasnip'.lsp_expand(args.body)
+                    end
+                },
+
+                sources = {
+                    { name = 'luasnip' },
+                    -- more sources
+                },
+            }
+        end
+    }
+    use { 'hrsh7th/cmp-nvim-lsp' }
+    use { 'L3MON4D3/LuaSnip', run = "make install_jsregexp" }
 
     -- debugging
     use('mfussenegger/nvim-dap')
@@ -85,4 +101,3 @@ return require('packer').startup(function(use)
 
     use('Feferoni/build-system.nvim')
 end)
-

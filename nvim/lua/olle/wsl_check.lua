@@ -1,7 +1,7 @@
 local M = {}
 
 M.is_wsl = function()
-    local handle = io.popen('grep -c Microsoft /proc/version')
+    local handle = io.popen('grep -ic Microsoft /proc/version')
     if handle == nil then
         return false
     end
