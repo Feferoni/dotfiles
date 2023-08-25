@@ -86,3 +86,4 @@ ln -s $PWD/.zshrc ~/
 
 ### WSL
 [Cattpucin theme, follow instructions in link to get the theme](https://github.com/catppuccin/windows-terminal)
+[PowerToys - Useful tool to override keys in windows](https://github.com/microsoft/PowerToys)
