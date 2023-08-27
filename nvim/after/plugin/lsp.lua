@@ -40,6 +40,27 @@ lsp.set_preferences({
     }
 })
 
+require('lspconfig').bashls.setup({
+    cmd = {
+        "bash-language-server",
+        "start"
+    },
+})
+
+require('lspconfig').pyright.setup({
+    cmd = {
+        "pyright-langserver",
+        "--stdio"
+    },
+})
+
+require('lspconfig').lua_ls.setup({
+    cmd = {
+        "lua-language-server",
+        "--stdio"
+    },
+})
+
 require('lspconfig').clangd.setup({
     cmd = {
         "clangd",
@@ -114,3 +135,4 @@ lsp.setup()
 vim.diagnostic.config({
     virtual_text = true
 })
+
