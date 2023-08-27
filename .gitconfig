@@ -1,0 +1,38 @@
+[user]
+	name = Olle
+	email = ollelundmark89@gmail.com
+[core]
+	editor = nvim
+	autocrlf = input
+[pack]
+	windowMemory = 100m
+	SizeLimit = 100m
+	threads = 1
+	deltaCacheSize = 150m
+	window = 0
+[http]
+	postbuffer = 524288000
+[push]
+	default = simple
+[merge]
+	tool = nvim 
+[alias]
+    st = status
+    ci = commit
+    ca = commit --amend
+    cm = commit -m
+    co = checkout
+    br = branch --vv
+    logg = log --graph --oneline --all
+    df = diff
+    ds = diff --staged
+    cp = cherry-pick
+    cpc = cherry-pick --continue
+    cpa = cherry-pick --abort
+    rb = rebase
+    rbi = rebase -i
+    rbc = rebase --continue
+    rba = rebase --abort
+    rbs = rebase --skip
+
+
