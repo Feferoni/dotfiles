@@ -35,4 +35,5 @@ vim.opt.updatetime = 50
 
 vim.gmapleader = " "
 
+vim.g.base16_colorspace = 256
 vim.opt.colorcolumn = "150"

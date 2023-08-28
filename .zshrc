@@ -12,6 +12,19 @@ fi
 
 alias sb='source ~/.zshrc'
 
+# BASE16_SHELL="$HOME/.config/base16-shell/"
+# [ -n "$PS1" ] && \
+#     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+#         source "$BASE16_SHELL/profile_helper.sh"
+        
+# base16_espresso
+
+# Base16 Shell
+BASE16_SHELL_PATH="$HOME/.config/base16-shell"
+[ -n "$PS1" ] && \
+  [ -s "$BASE16_SHELL_PATH/profile_helper.sh" ] && \
+    source "$BASE16_SHELL_PATH/profile_helper.sh"
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -89,6 +102,7 @@ plugins=(
     git
     history-substring-search
     tmuxinator
+    base16-shell
 )
 
 source $ZSH/oh-my-zsh.sh

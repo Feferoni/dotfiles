@@ -80,7 +80,10 @@ cp .zshrc ~/
 ln -s $PWD/.zshrc ~/
 ```
 
-## Color for terminal emulator
+## Base 16 color theme - used to get a unifed theme across (zsh, tmux, tmux powerline and neovim)
+[base 16 terminal colors] (https://github.com/tinted-theming/base16-shell)
+
+## Color for terminal emulator (ignore this, old news)
 ### Linux
 [Gogh, follow their instructions on how to install and switch color profiles](https://github.com/Gogh-Co/Gogh)
 

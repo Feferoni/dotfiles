@@ -85,6 +85,7 @@ return require('packer').startup(function(use)
     use { 'lewis6991/gitsigns.nvim', commit = 'd8590288417fef2430f85bc8b312fae8b1cf2c40' }
 
     -- themes
+    use { 'RRethy/nvim-base16' }
     -- use({
     --     'rose-pine/neovim',
     --     as = 'rose-pine',
@@ -93,14 +94,14 @@ return require('packer').startup(function(use)
     --         vim.cmd('colorscheme rose-pine')
     --     end
     -- })
-    use({
-        'catppuccin/nvim',
-        as = 'catppuccin',
-        tag = 'v1.4.0',
-        config = function()
-            vim.cmd('colorscheme catppuccin')
-        end
-    })
+    -- use({
+    -- 'catppuccin/nvim',
+    -- as = 'catppuccin',
+    -- tag = 'v1.4.0',
+    -- config = function()
+    --     vim.cmd('colorscheme catppuccin')
+    -- end
+    -- })
 
     use('Feferoni/build-system.nvim')
 end)
