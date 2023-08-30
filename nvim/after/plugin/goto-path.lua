@@ -8,4 +8,8 @@ goto_path.setup({
     }
 })
 
-vim.keymap.set("n", "gf", goto_path.go)
+vim.keymap.set("n", "gf", function()
+    -- autocmd User TelescopePreviewerLoaded setlocal wrap
+    local opts = {}
+    goto_path.go(opts)
+end)

@@ -1,22 +1,24 @@
 local M = {}
 
-M.get_path_and_tail = function(filename)
-    local utils = require('telescope.utils')
-    local bufname_tail = utils.path_tail(filename)
-    local path_without_tail = require('plenary.strings').truncate(filename, #filename - #bufname_tail, '')
-    local path_to_display = utils.transform_path({
-        path_display = { 'truncate' },
-    }, path_without_tail)
+local actions = require('telescope.actions')
+local state = require('telescope.state')
+local Path = require('plenary.path')
+local actionstate = require('telescope.actions.state')
+local builtin = require('telescope.builtin')
+local make_entry = require('telescope.make_entry')
+local utils = require('telescope.utils')
+local entry_display = require('telescope.pickers.entry_display')
+local devicons = require('nvim-web-devicons')
+local strings = require('plenary.strings')
 
+M.get_path_and_tail = function(filename)
+    local bufname_tail = utils.path_tail(filename)
+    local path_without_tail = strings.truncate(filename, #filename - #bufname_tail, '')
+    local path_to_display = utils.transform_path({ path_display = { 'truncate' }, }, path_without_tail)
     return bufname_tail, path_to_display
 end
 
 M.project_files = function(opts, search_function)
-    local make_entry = require('telescope.make_entry')
-    local strings = require('plenary.strings')
-    local utils = require('telescope.utils')
-    local entry_display = require('telescope.pickers.entry_display')
-    local devicons = require('nvim-web-devicons')
     local def_icon = devicons.get_icon('fname', { default = true })
     local iconwidth = strings.strdisplaywidth(def_icon)
 
@@ -27,9 +29,8 @@ M.project_files = function(opts, search_function)
     end
 
     opts = opts or {}
-    opts.hidden = true
 
-    opts.attach_mappings = function(_, map)
+    opts.attach_mappings = function(prompt_bufnr, map)
         map_i_actions(_, map)
         return true
     end
@@ -50,25 +51,17 @@ M.project_files = function(opts, search_function)
             local tail = tail_raw .. ' '
             local icon, iconhl = utils.get_devicons(tail_raw)
 
-            return displayer({
-                { icon,            iconhl },
-                tail,
-                { path_to_display, 'TelescopeResultsComment' },
-            })
+            return displayer({ { icon, iconhl }, tail, { path_to_display, 'TelescopeResultsComment' }, })
         end
         return entry
     end
 
     if opts and opts.oldfiles then
-        local cache_opts = vim.tbl_deep_extend('force', {
-        }, opts)
+        local cache_opts = vim.tbl_deep_extend('force', {}, opts)
         local cycle = require('libs.telescope.cycle')(
             function(income_opts)
-                require('telescope.builtin').find_files(vim.tbl_extend('force', cache_opts, {
-                    results_title = '  All Files: ',
-                }, income_opts))
-            end
-        )
+                builtin.find_files(vim.tbl_extend('force', cache_opts, { results_title = '  All Files: ', }, income_opts))
+            end)
         opts = vim.tbl_extend('force', {
             results_title = '  Recent files: ',
             prompt_title = '  Recent files',
@@ -78,7 +71,7 @@ M.project_files = function(opts, search_function)
                 return true
             end
         }, opts)
-        return require('telescope.builtin').oldfiles(opts)
+        return builtin.oldfiles(opts)
     end
 
     search_function(opts)
@@ -98,7 +91,6 @@ function M.buffers_or_recent()
 end
 
 function M.buffers()
-    local actionstate = require('telescope.actions.state')
     -- local Buffer = require('libs.runtime.buffer')
 
     builtin.buffers({
@@ -115,7 +107,6 @@ function M.buffers()
                 local selection = actionstate.get_selected_entry()
                 actions.close(prompt_bufnr)
                 vim.api.nvim_buf_delete(selection.bufnr, { force = false })
-                local state = require('telescope.state')
                 local cached_pickers = state.get_global_key('cached_pickers') or {}
                 -- remove this picker cache
                 table.remove(cached_pickers, 1)
@@ -142,12 +133,6 @@ function M.buffers()
 end
 
 function M.gen_from_buffer(opts)
-    local utils = require('telescope.utils')
-    local strings = require('plenary.strings')
-    local entry_display = require('telescope.pickers.entry_display')
-    local Path = require('plenary.path')
-    local make_entry = require('telescope.make_entry')
-
     opts = opts or {}
 
     local disable_devicons = opts.disable_devicons
@@ -164,10 +149,10 @@ function M.gen_from_buffer(opts)
         -- bufnr_width + modes + icon + 3 spaces + : + lnum
         opts.__prefix = opts.bufnr_width + 4 + icon_width + 3 + 1 + #tostring(entry.lnum)
         local bufname_tail = utils.path_tail(entry.filename)
-        local path_without_tail = require('plenary.strings').truncate(entry.filename, #entry.filename - #bufname_tail, '')
-        local path_to_display = utils.transform_path({
-            path_display = { 'truncate' },
-        }, path_without_tail)
+        local path_without_tail = strings.truncate(entry.filename, #entry.filename - #bufname_tail, '')
+
+        local ptd = { 'truncate' }
+        local path_to_display = utils.transform_path({ ptd, }, path_without_tail)
         local bufname_width = strings.strdisplaywidth(bufname_tail)
         local icon, hl_group = utils.get_devicons(entry.filename, disable_devicons)
 

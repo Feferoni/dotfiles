@@ -1,9 +1,27 @@
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 local actions = require('telescope.actions')
+local sorters = require('telescope.sorters')
+local previewers = require('telescope.previewers')
+
 require('telescope').setup {
     defaults = {
+        vimgrep_arguments = {
+            -- 'rg',
+            -- '--color=never',
+            -- '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case'
+        },
+        -- file_ignore_pattern = { '^.git/' },
         -- layout_strategy = 'vertical',
+        file_sorter = sorters.get_fuzzy_file,
+        generic_sorter = sorters.get_generic_fuzzy_sorter,
+        file_previewer = previewers.vim_buffer_cat.new,
+        grep_previewer = previewers.vim_buffer_vimgrep.new,
+        qflist_previewer = previewers.vim_buffer_qflist.new,
         layout_config = {
             width = 0.95,
             height = 0.95,
@@ -31,33 +49,33 @@ pcall(require('telescope').load_extension, 'fzf')
 local builtin = require('telescope.builtin')
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>/', function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-    layout_config = {
-      width = 0.8,
-      height = 0.85,
-      prompt_position = "top",
-      horizontal = {
-        preview_width = function(_, cols, _)
-          return math.floor(cols * 0.4)
-        end,
-      },
+    -- You can pass additional configuration to telescope to change theme, layout, etc.
+    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+        winblend = 10,
+        previewer = false,
+        layout_config = {
+            width = 0.8,
+            height = 0.85,
+            prompt_position = "top",
+            horizontal = {
+                preview_width = function(_, cols, _)
+                    return math.floor(cols * 0.4)
+                end,
+            },
 
-      vertical = {
-        width = 0.8,
-        height = 0.85,
-        preview_height = 0.35,
-      },
+            vertical = {
+                width = 0.8,
+                height = 0.85,
+                preview_height = 0.35,
+            },
 
-      flex = {
-        horizontal = {
-          preview_width = 0.8,
+            flex = {
+                horizontal = {
+                    preview_width = 0.8,
+                },
+            },
         },
-      },
-    },
-  })
+    })
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
@@ -76,8 +94,16 @@ vim.keymap.set('n', '<leader>sb', telescope_prettier.buffers_or_recent, { desc =
 
 vim.keymap.set('n', '<leader>sf', function()
     local opts = {}
+    -- opts.hidden = false
+    -- opts.no_ignore = true
     telescope_prettier.project_files(opts, builtin.find_files)
 end, { desc = '[S]earch [F]iles' })
+
+vim.keymap.set('n', '<leader>sc', function()
+    local opts = {}
+    opts.cwd = '~/.config/nvim'
+    telescope_prettier.project_files(opts, builtin.find_files)
+end, { desc = '[S]earch Nvim [C]onfig' })
 
 vim.keymap.set('n', '<leader>?', function()
     local opts = {}
