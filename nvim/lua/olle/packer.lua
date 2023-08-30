@@ -104,4 +104,5 @@ return require('packer').startup(function(use)
     -- })
 
     use('Feferoni/build-system.nvim')
+    use('Feferoni/goto-path.nvim')
 end)

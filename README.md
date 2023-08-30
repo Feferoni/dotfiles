@@ -81,7 +81,14 @@ ln -s $PWD/.zshrc ~/
 ```
 
 ## Base 16 color theme - used to get a unifed theme across (zsh, tmux, tmux powerline and neovim)
-[base 16 terminal colors] (https://github.com/tinted-theming/base16-shell)
+[base 16 terminal colors](https://github.com/tinted-theming/base16-shell)
+
+[base 16 tmux](https://github.com/tinted-theming/base16-tmux)
+
+[base 16 tmux powerline](https://github.com/teddyhwang/base16-tmux-powerline)
+
+[base 16 vim](https://github.com/tinted-theming/base16-vim)
+
 
 ## Color for terminal emulator (ignore this, old news)
 ### Linux
