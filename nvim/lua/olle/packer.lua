@@ -24,14 +24,6 @@ return require('packer').startup(function(use)
     use { 'theprimeagen/harpoon', commit = '21f4c47c6803d64ddb934a5b314dcb1b8e7365dc' }
     use { 'mbbill/undotree', tag = 'rel_6.1' }
 
-    -- ui
-    -- use {
-    --     "iamcco/markdown-preview.nvim",
-    --     tag = 'v0.0.10',
-    --     run = "cd app && npm install",
-    --     setup = function() vim.g.mkdp_filetypes = { "markdown" } end,
-    --     ft = { "markdown" },
-    -- }
     use {
         'nvim-treesitter/nvim-treesitter',
         commit = 'd0b17cc0b9c8c3055530770a9dd4de659232c692',
@@ -85,23 +77,7 @@ return require('packer').startup(function(use)
     use { 'lewis6991/gitsigns.nvim', commit = 'd8590288417fef2430f85bc8b312fae8b1cf2c40' }
 
     -- themes
-    use { 'RRethy/nvim-base16' }
-    -- use({
-    --     'rose-pine/neovim',
-    --     as = 'rose-pine',
-    --     tag = 'v1.2.0',
-    --     config = function()
-    --         vim.cmd('colorscheme rose-pine')
-    --     end
-    -- })
-    -- use({
-    -- 'catppuccin/nvim',
-    -- as = 'catppuccin',
-    -- tag = 'v1.4.0',
-    -- config = function()
-    --     vim.cmd('colorscheme catppuccin')
-    -- end
-    -- })
+    use { 'tinted-theming/base16-vim' }
 
     use('Feferoni/build-system.nvim')
     use('Feferoni/goto-path.nvim')
