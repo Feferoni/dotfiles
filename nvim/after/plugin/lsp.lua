@@ -59,6 +59,14 @@ require('lspconfig').lua_ls.setup({
         "lua-language-server",
         "--stdio"
     },
+    autostart = true,
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }
+            }
+        }
+    }
 })
 
 require('lspconfig').clangd.setup({

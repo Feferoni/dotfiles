@@ -30,7 +30,7 @@ M.project_files = function(opts, search_function)
 
     opts = opts or {}
 
-    opts.attach_mappings = function(prompt_bufnr, map)
+    opts.attach_mappings = function(_, map)
         map_i_actions(_, map)
         return true
     end

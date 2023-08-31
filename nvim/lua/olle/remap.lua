@@ -1,6 +1,10 @@
 vim.g.mapleader = " "
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
+-- selection will extend up to but not including, the cursor position
+vim.o.selection = "exclusive"
+vim.o.virtualedit = "onemore"
+
 -- Toggle wrap lines
 vim.keymap.set("n", "<F6>", ":set wrap!<cr>", { noremap = true, silent = true })
 vim.keymap.set('n', '<esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
@@ -31,7 +35,7 @@ vim.keymap.set("n", "<leader>Y", [["+Y]])
 -- deletes the currently marked thing, and puts it into void register. Keeping the old copy buffer after the delete
 vim.keymap.set({"n", "v" }, "<leader>d", [["_d]])
 
--- does nothing 
+-- does nothing
 vim.keymap.set("n", "Q", "<nop>")
 
 -- ctrl + f to do something with tmux, figure out what
@@ -59,8 +63,9 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 
 -- replace word your on
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "<leader>S", [[:%s/\<<C-r><C-W>\>/<C-r><C-W>/gI<Left><Left><Left>]])
--- makes current file executable 
+vim.keymap.set("v", "<leader>s", [["hy:%s/<C-r>h/<C-r>h/gc<left><left><left>]])
+
+-- makes current file executable
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc='turn file into executable'})
 
 -- uses telescope to check references
