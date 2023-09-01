@@ -18,6 +18,13 @@ return require('packer').startup(function(use)
 
     -- file explorer / navigation / etc
     use {
+        'nvim-tree/nvim-tree.lua',
+        commit = '00741206c2df9c4b538055def19b99790f0c95c8',
+        dependencies = {
+            'nvim-tree/nvim-web-devicons',
+        },
+    }
+    use {
         'nvim-telescope/telescope.nvim', tag = '0.1.2',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }

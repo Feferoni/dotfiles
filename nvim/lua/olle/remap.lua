@@ -1,5 +1,5 @@
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+-- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- use file tree instead
 
 -- selection will extend up to but not including, the cursor position
 vim.o.selection = "exclusive"
