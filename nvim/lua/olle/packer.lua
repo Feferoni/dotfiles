@@ -41,7 +41,11 @@ return require('packer').startup(function(use)
         commit = '429f3e76cbb1c59fe000b690f7a5bea617b890c0',
     }
     use { 'tpope/vim-commentary', tag = 'v1.3' }
+    use { 'tpope/vim-surround' }
     use { 'nvim-tree/nvim-web-devicons', tag = 'nerd-v2-compat' }
+    use { 'mg979/vim-visual-multi' }
+
+    use 'nvim-treesitter/completion-treesitter'
 
     -- code completions / lsp / snippets / etc
     use { "github/copilot.vim", tag = 'v1.10.1' }
