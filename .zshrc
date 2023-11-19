@@ -95,7 +95,6 @@ plugins=(
     git
     history-substring-search
     tmuxinator
-    base16-shell
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -125,3 +124,6 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# removing WSL junk from PATH variable
+export PATH=$(echo "$PATH" | sed -e 's/:\/mnt[^:]*//g')

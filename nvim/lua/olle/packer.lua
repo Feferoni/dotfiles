@@ -28,7 +28,7 @@ return require('packer').startup(function(use)
         'nvim-telescope/telescope.nvim', tag = '0.1.2',
         requires = { { 'nvim-lua/plenary.nvim' } }
     }
-    use { 'theprimeagen/harpoon', commit = '21f4c47c6803d64ddb934a5b314dcb1b8e7365dc' }
+    use { 'theprimeagen/harpoon' }
     use { 'mbbill/undotree', tag = 'rel_6.1' }
 
     use {
