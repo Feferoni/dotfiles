@@ -6,8 +6,8 @@ lsp.preset({})
 lsp.ensure_installed({
     'rust_analyzer',
     -- 'gopls',
-    -- 'pyright',
-    -- 'bashls',
+    'pyright',
+    'bashls',
     'lua_ls'
 })
 
