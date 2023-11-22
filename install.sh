@@ -1,7 +1,5 @@
 #!/bin/bash
 
-dotfile_repo_location=$PWD
-
 colored_echo() {
     local color_code="31"
     local text="$1"
@@ -11,14 +9,46 @@ colored_echo() {
     echo -e "\e[${color_code}m${text}\e[0m"
 }
 
+dotfile_repo_location=$PWD
+
+if [ ! "$EUID" -eq 0 ]; then
+    colored_echo "Script is not ran with sudo privilages. A lot of things will not work."
+    colored_echo "Do you still want to continue? y to continue: "
+    read -r continue
+    if [ ! "$continue" = "y" ]; then
+        exit 0
+    fi
+fi
+
+
+is_wsl() {
+    grep -ic Microsoft /proc/version
+}
+
 install_with_apt() {
-    programs_to_install=(git curl gettext unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf)
+    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf)
 
     colored_echo "Using apt-get to install packages..."
     sudo apt-get update
     for program in "${programs_to_install[@]}"; do
         sudo apt-get install -y "$program"
     done
+
+    if ! command -v snap >/dev/null 2>&1; then
+        sudo apt-get install -y snap
+    fi
+
+    if [ $(is_wsl) -eq 1 ]; then
+        wsl_conf_file="/etc/wsl.conf"
+        colored_echo "If you have problem with snap installation, check the $wsl_conf_file and make sure that the following rows are in it:"
+        colored_echo "[boot]"
+        colored_echo "systemd=true"
+        colored_echo ""
+        colored_echo "If you change this, a restart of wsl is needed by writing \"wsl --shutdown\". Then run the script again to install stuff via snap."
+        colored_echo "If it still doesn't work, try updating wsl by \"wsl --update\" then shutdown and restart wsl again."
+        colored_echo ""
+        colored_echo "I have been able to get this to work on some computer, don't know how though."
+    fi
 
     sudo snap install bash-language-server --classic
     sudo snap install pyright --classic
@@ -151,6 +181,7 @@ colored_echo "Do you want to install cargod? This will also download fd-find and
 read -r cargo_install
 if [ "$cargo_install" = "y" ]; then
     curl https://sh.rustup.rs -sSf | sh
+    source "$HOME/.cargo/env"
     cargo install fd-find
     cargo install bat
 fi

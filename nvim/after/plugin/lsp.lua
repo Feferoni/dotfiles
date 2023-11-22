@@ -8,7 +8,7 @@ lsp.ensure_installed({
     -- 'gopls',
     'pyright',
     'bashls',
-    'lua_ls'
+    'lua_ls',
 })
 
 -- Fix Undefined global 'vim'
@@ -39,6 +39,23 @@ lsp.set_preferences({
         info = 'I'
     }
 })
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+-- Configure ElixirLS as the LSP server for Elixir.
+require'lspconfig'.elixirls.setup{
+  cmd = { "/home/feferoni/git/elixir-ls/apps/elixir_ls_utils/priv/language_server.sh" },
+  -- on_attach = custom_attach, -- this may be required for extended functionalities of the LSP
+  capabilities = capabilities,
+  flags = {
+    debounce_text_changes = 150,
+  },
+  elixirLS = {
+    dialyzerEnabled = false,
+    fetchDeps = false,
+  };
+}
 
 require('lspconfig').bashls.setup({
     cmd = {

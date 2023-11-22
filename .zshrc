@@ -1,8 +1,12 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=/snap/bin/:$HOME/go/bin:$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/programs/node-v20.0.0-linux-x64/bin:$HOME/git/elixir/bin:$HOME/git/otp/bin:$HOME/go/bin:$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+
+is_wsl() {
+    grep -ic Microsoft /proc/version
+}
 
 # Check if nvim exists
 if command -v nvim &> /dev/null; then
@@ -125,5 +129,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# removing WSL junk from PATH variable
-export PATH=$(echo "$PATH" | sed -e 's/:\/mnt[^:]*//g')
+if [ $(is_wsl) -eq 1 ]; then
+    export PATH=$(echo "$PATH" | sed -e 's/:\/mnt[^:]*//g')
+    cd
+fi
