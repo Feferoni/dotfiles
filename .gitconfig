@@ -2,7 +2,7 @@
 	name = Olle
 	email = ollelundmark89@gmail.com
 [core]
-	editor = nvim
+	editor = vim
 	autocrlf = input
 [pack]
 	windowMemory = 100m

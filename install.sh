@@ -26,7 +26,7 @@ is_wsl() {
 }
 
 install_with_apt() {
-    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf)
+    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf ninja-build)
 
     colored_echo "Using apt-get to install packages..."
     sudo apt-get update
@@ -52,6 +52,7 @@ install_with_apt() {
 
     sudo snap install bash-language-server --classic
     sudo snap install pyright --classic
+    sudo snap install gopls --classic
 }
 
 install_with_pacman() {
@@ -186,4 +187,5 @@ if [ "$cargo_install" = "y" ]; then
     cargo install bat
 fi
 
+colored_echo "If you want to install latest clang: visit https://apt.llvm.org/ and follow their instructions"
 colored_echo "Setup should be complete, restart the terminal for full effect."

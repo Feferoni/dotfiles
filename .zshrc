@@ -22,6 +22,9 @@ BASE16_SHELL_PATH="$HOME/.config/base16-shell"
   [ -s "$BASE16_SHELL_PATH/profile_helper.sh" ] && \
     source "$BASE16_SHELL_PATH/profile_helper.sh"
 
+
+
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -129,7 +132,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-if [ $(is_wsl) -eq 1 ]; then
+if [ "$(uname -r | grep -i microsoft)" ]; then
     export PATH=$(echo "$PATH" | sed -e 's/:\/mnt[^:]*//g')
+    export PATH=/mnt/c/Windows/System32:$PATH
     cd
 fi
