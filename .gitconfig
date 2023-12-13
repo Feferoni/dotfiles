@@ -2,7 +2,7 @@
 	name = Olle
 	email = ollelundmark89@gmail.com
 [core]
-	editor = vim
+	editor = nvim
 	autocrlf = input
 [pack]
 	windowMemory = 100m
@@ -15,14 +15,15 @@
 [push]
 	default = simple
 [merge]
-	tool = nvim 
+	tool = nvim
 [alias]
     st = status
     ci = commit
     ca = commit --amend
+    cane = commit --amend --no-edit
     cm = commit -m
     co = checkout
-    br = branch --vv
+    br = branch -vv
     logg = log --graph --oneline --all
     df = diff
     ds = diff --staged

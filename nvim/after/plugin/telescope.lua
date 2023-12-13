@@ -7,9 +7,9 @@ local previewers = require('telescope.previewers')
 require('telescope').setup {
     defaults = {
         vimgrep_arguments = {
-            -- 'rg',
-            -- '--color=never',
-            -- '--no-heading',
+            'rg',
+            '--color=never',
+            '--no-heading',
             '--with-filename',
             '--line-number',
             '--column',
@@ -40,6 +40,14 @@ require('telescope').setup {
             },
         },
     },
+    extensions = {
+        fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+            case_mode = "smart_case",
+        }
+    }
 }
 
 -- Enable telescope fzf native, if installed
@@ -81,6 +89,17 @@ end, { desc = '[/] Fuzzily search in current buffer]' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set('v', '<leader>sg', function()
+    vim.cmd('normal! "hy')
+    local opts = {}
+    opts.default_text = vim.fn.getreg('h')
+    builtin.live_grep(opts)
+end, { desc = '[S]earch with live [G]rep' })
+vim.keymap.set('n', '<leader>ss', function()
+    local opts = {}
+    opts.search = vim.fn.input("Grep > ")
+    builtin.live_grep(opts)
+end, { desc = '[S]earch [S]tring - grep for string' })
 vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sm', ":Telescope harpoon marks<CR>", { desc = 'Harpoon [M]arks' })
 -- maybe remove this?

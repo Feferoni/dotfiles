@@ -1,3 +1,4 @@
+require("olle.lazy")
 require("olle.autocmds")
 require("olle.remap")
 require("olle.set")

@@ -1,33 +1,27 @@
+local mason = require("mason")
+mason.setup()
+
 local lsp = require('lsp-zero')
 
 -- lsp.preset('recommended')
 lsp.preset({})
 
-lsp.ensure_installed({
-    'rust_analyzer',
-    -- 'gopls',
-    'pyright',
-    'bashls',
-    'lua_ls',
-})
-
--- Fix Undefined global 'vim'
-lsp.nvim_workspace()
-
 local cmp = require('cmp')
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<A-k>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<A-j>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<A-a>'] = cmp.mapping.confirm({ select = true }),
-    ["<A-s>"] = cmp.mapping.complete(),
-})
+local cmp_action = lsp.cmp_action()
 
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
-
-lsp.setup_nvim_cmp({
-    mapping = cmp_mappings
+cmp.setup({
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<A-k>'] = cmp.mapping.select_prev_item(cmp_select),
+        ['<A-j>'] = cmp.mapping.select_next_item(cmp_select),
+        ['<A-a>'] = cmp.mapping.confirm({ select = true }),
+        ["<A-s>"] = cmp.mapping.complete(),
+        ['<Tab>'] = nil,
+        ['<S-Tab>'] = nil,
+    })
 })
 
 lsp.set_preferences({
@@ -43,10 +37,9 @@ lsp.set_preferences({
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
--- Configure ElixirLS as the LSP server for Elixir.
-require'lspconfig'.elixirls.setup{
+local lsp_config = require('lspconfig')
+lsp_config.elixirls.setup{
   cmd = { "/home/feferoni/git/elixir-ls/apps/elixir_ls_utils/priv/language_server.sh" },
-  -- on_attach = custom_attach, -- this may be required for extended functionalities of the LSP
   capabilities = capabilities,
   flags = {
     debounce_text_changes = 150,
@@ -57,21 +50,28 @@ require'lspconfig'.elixirls.setup{
   };
 }
 
-require('lspconfig').bashls.setup({
+
+lsp_config.cmake.setup({
+    cmd = {
+        "cmake-language-server"
+    }
+})
+
+lsp_config.bashls.setup({
     cmd = {
         "bash-language-server",
         "start"
     },
 })
 
-require('lspconfig').pyright.setup({
+lsp_config.pyright.setup({
     cmd = {
         "pyright-langserver",
         "--stdio"
     },
 })
 
-require('lspconfig').lua_ls.setup({
+lsp_config.lua_ls.setup({
     cmd = {
         "lua-language-server",
         "--stdio"
@@ -86,16 +86,16 @@ require('lspconfig').lua_ls.setup({
     }
 })
 
-require('lspconfig').clangd.setup({
+lsp_config.clangd.setup({
     cmd = {
-        "clangd",
+        "clangd-18",
         "-j=10",
         "--background-index",
         "--all-scopes-completion",
         "--header-insertion=never",
         "--recovery-ast",
         "--pch-storage=disk",
-        "--suggest-missing-include",
+        -- "--suggest-missing-include",
         "--log=info",
         "--clang-tidy",
         "--enable-config",
@@ -142,7 +142,7 @@ lsp.on_attach(function(_, bufnr)
     require("clangd_extensions.inlay_hints").setup_autocmd()
     require("clangd_extensions.inlay_hints").set_inlay_hints()
     nmap('<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
-    nmap('<leader>th', '<cmd>ClangdSwitchSourceHeader<cr>', '[T]oggle between [H]eader and source')
+    nmap('gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
 
     -- Create a command `:Format` local to the LSP buffer
     vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)

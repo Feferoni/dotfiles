@@ -1,5 +1,9 @@
 vim.opt.guicursor = ""
 
+-- selection will extend up to but not including, the cursor position
+-- vim.o.selection = "exclusive"
+vim.o.virtualedit = "onemore"
+
 -- disable netrw at the very start of your init.lua - to make file tree better
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
@@ -25,6 +29,8 @@ vim.opt.hlsearch = true
 vim.opt.incsearch = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+
+vim.opt.guicursor = "i-ci-ve:ver25"
 
 vim.opt.showmatch = true
 

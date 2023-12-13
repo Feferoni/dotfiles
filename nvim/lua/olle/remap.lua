@@ -2,8 +2,8 @@ vim.g.mapleader = " "
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- use file tree instead
 
 -- selection will extend up to but not including, the cursor position
-vim.o.selection = "exclusive"
-vim.o.virtualedit = "onemore"
+-- vim.o.selection = "exclusive"
+-- vim.o.virtualedit = "onemore"
 
 -- Toggle wrap lines
 vim.keymap.set("n", "<F6>", ":set wrap!<cr>", { noremap = true, silent = true })
@@ -38,9 +38,6 @@ vim.keymap.set({"n", "v" }, "<leader>d", [["_d]])
 -- does nothing
 vim.keymap.set("n", "Q", "<nop>")
 
--- ctrl + f to do something with tmux, figure out what
-vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-
 -- Diagnostic keymaps
 vim.keymap.set('n', 'gp', vim.diagnostic.goto_prev)
 vim.keymap.set('n', 'gn', vim.diagnostic.goto_next)
@@ -62,8 +59,15 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("i", "<C-c>", "<Esc>")
 
 -- replace word your on
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("v", "<leader>s", [["hy:%s/<C-r>h/<C-r>h/gc<left><left><left>]])
+-- replace word your on
+vim.keymap.set("n", "<leader>sr", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+    { desc = '[S]earch and [R]eplace current word without confirmation' })
+vim.keymap.set("n", "<leader>SR", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]],
+    { desc = '[S]earch and [R]eplace current word with confirmation' })
+vim.keymap.set("v", "<leader>sr", [["hy:%s/<C-r>h/<C-r>h/gI<left><left><left>]],
+    { desc = '[S]earch and [R]eplace current selection without confirmation' })
+vim.keymap.set("v", "<leader>SR", [["hy:%s/<C-r>h/<C-r>h/gc<left><left><left>]],
+    { desc = '[S]earch and [R]eplace current selection with confirmation' })
 
 -- makes current file executable
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc='turn file into executable'})
@@ -81,3 +85,15 @@ vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
     vim.print("Resourced file")
 end)
+
+local copy_text_to_clipboard = function(text)
+    local command = 'printf "' .. text .. '" | xclip -selection clipboard'
+    vim.fn.system(command)
+end
+
+local path = require('plenary.path')
+vim.keymap.set("n", "<leader>cfp", function()
+    local current_file = path:new(vim.fn.expand('%:p'))
+    local current_folder = tostring(current_file:parent())
+    copy_text_to_clipboard(current_folder .. "/")
+end, { desc = '[C]opy [F]ile [P]ath'})
