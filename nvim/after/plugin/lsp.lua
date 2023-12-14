@@ -88,7 +88,7 @@ lsp_config.lua_ls.setup({
 
 lsp_config.clangd.setup({
     cmd = {
-        "clangd-18",
+        "clangd",
         "-j=10",
         "--background-index",
         "--all-scopes-completion",
