@@ -1,4 +1,3 @@
-# If you come from bash you might have to change your $PATH.
 export PATH=$HOME/programs/node-v20.0.0-linux-x64/bin:$PATH
 export PATH=$HOME/programs/node-v20.0.0-linux-x64/lib/node_modules:$PATH
 export PATH=$HOME/git/elixir/bin:$PATH
@@ -12,16 +11,16 @@ export PATH=/usr/local/bin:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$HOME/bin:$PATH
 
-# Path to your oh-my-zsh installation.
+export CC=$(which clang)
+export CXX=$(which clang++)
+
 export ZSH="$HOME/.oh-my-zsh"
 
 is_wsl() {
     grep -ic Microsoft /proc/version
 }
 
-# Check if nvim exists
 if command -v nvim &> /dev/null; then
-  # Alias vim to nvim
   alias vim='nvim'
 fi
 
@@ -32,9 +31,6 @@ BASE16_SHELL_PATH="$HOME/.config/base16-shell"
 [ -n "$PS1" ] && \
   [ -s "$BASE16_SHELL_PATH/profile_helper.sh" ] && \
     source "$BASE16_SHELL_PATH/profile_helper.sh"
-
-
-
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,

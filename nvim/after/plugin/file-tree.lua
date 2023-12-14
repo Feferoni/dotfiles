@@ -22,8 +22,8 @@ tree.setup({
     filters = {
         dotfiles = false,
         git_clean = false,
-        custom = {},
-        exclude = {},
+        exclude = { ".gitignore" },
+        custom = { "^\\.git", "^\\.cache" },
     },
     git = {
         enable = true,
@@ -37,4 +37,9 @@ tree.setup({
         update_root = false,
         ignore_list = {},
     },
+    filesystem_watchers = {
+        enable = true,
+        debounce_delay = 50,
+        ignore_dirs = {},
+    }
 })

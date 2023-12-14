@@ -95,7 +95,6 @@ lsp_config.clangd.setup({
         "--header-insertion=never",
         "--recovery-ast",
         "--pch-storage=disk",
-        -- "--suggest-missing-include",
         "--log=info",
         "--clang-tidy",
         "--enable-config",
