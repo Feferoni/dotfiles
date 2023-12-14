@@ -8,9 +8,9 @@ export PATH=/usr/local/lib/node_modules/:$PATH
 export PATH=/usr/local/go/bin:$PATH
 export PATH=/snap/bin/:$PATH
 export PATH=$HOME/go/bin:$PATH
-export PATH=$HOME/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
+export PATH=$HOME/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
