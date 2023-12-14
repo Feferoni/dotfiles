@@ -11,16 +11,6 @@ colored_echo() {
 
 dotfile_repo_location=$PWD
 
-if [ ! "$EUID" -eq 0 ]; then
-    colored_echo "Script is not ran with sudo privilages. A lot of things will not work."
-    colored_echo "Do you still want to continue? y to continue: "
-    read -r continue
-    if [ ! "$continue" = "y" ]; then
-        exit 0
-    fi
-fi
-
-
 is_wsl() {
     grep -ic Microsoft /proc/version
 }
@@ -184,6 +174,7 @@ if [ "$cargo_install" = "y" ]; then
     curl https://sh.rustup.rs -sSf | sh
     source "$HOME/.cargo/env"
     cargo install fd-find
+    cargo install tree-sitter-cli
     cargo install bat
 fi
 

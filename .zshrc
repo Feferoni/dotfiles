@@ -1,5 +1,16 @@
 # If you come from bash you might have to change your $PATH.
-export PATH=$HOME/programs/node-v20.0.0-linux-x64/bin:$HOME/git/elixir/bin:$HOME/git/otp/bin:$HOME/.local/share/nvim/mason/bin/:/usr/local/lib/node_modules/:/usr/local/go/bin:/snap/bin/:$HOME/go/bin:$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/programs/node-v20.0.0-linux-x64/bin:$PATH
+export PATH=$HOME/programs/node-v20.0.0-linux-x64/lib/node_modules:$PATH
+export PATH=$HOME/git/elixir/bin:$PATH
+export PATH=$HOME/git/otp/bin:$PATH
+export PATH=$HOME/.local/share/nvim/mason/bin/:$PATH
+export PATH=/usr/local/lib/node_modules/:$PATH
+export PATH=/usr/local/go/bin:$PATH
+export PATH=/snap/bin/:$PATH
+export PATH=$HOME/go/bin:$PATH
+export PATH=$HOME/bin:$PATH
+export PATH=/usr/local/bin:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
