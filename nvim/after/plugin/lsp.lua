@@ -7,8 +7,7 @@ local lsp = require('lsp-zero')
 lsp.preset({})
 
 local cmp = require('cmp')
-local cmp_action = lsp.cmp_action()
-
+local cmp_select = { behavior = cmp.SelectBehavior.Select }
 cmp.setup({
     window = {
         completion = cmp.config.window.bordered(),
@@ -23,7 +22,6 @@ cmp.setup({
         ['<S-Tab>'] = nil,
     })
 })
-
 lsp.set_preferences({
     suggest_lsp_servers = false,
     sign_icons = {
@@ -38,6 +36,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 local lsp_config = require('lspconfig')
+local util = lsp_config.util
 lsp_config.elixirls.setup{
   cmd = { "/home/feferoni/git/elixir-ls/apps/elixir_ls_utils/priv/language_server.sh" },
   capabilities = capabilities,
@@ -62,6 +61,13 @@ lsp_config.bashls.setup({
         "bash-language-server",
         "start"
     },
+    filetypes = {
+        "sh",
+    },
+    settings = {
+        util.find_git_ancestor
+    },
+    single_file_support = true,
 })
 
 lsp_config.pyright.setup({
