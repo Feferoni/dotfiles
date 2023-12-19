@@ -45,7 +45,7 @@ require("dapui").setup({
             size = 0.25
           } },
         position = "right",
-        size = 150
+        size = 100
       }, {
         elements = { {
             id = "repl",
@@ -101,7 +101,7 @@ dap.configurations.cpp = {
         type = 'lldb',
         request = 'launch',
         program = function()
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/', 'file')
         end,
         cwd = '${workspaceFolder}/build',
         terminal = 'integrated',
@@ -116,9 +116,12 @@ dap.set_log_level('DEBUG')
 
 vim.keymap.set("n", "<leader>b", ":lua require'dap'.toggle_breakpoint()<CR>")
 vim.keymap.set("n", "<leader>B", ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>")
-vim.keymap.set("n", "<F5>", ":lua require'dap'.continue()<CR>")
-vim.keymap.set("n", "<F1>", ":lua require'dap'.step_over()<CR>")
-vim.keymap.set("n", "<F2>", ":lua require'dap'.step_into()<CR>")
+vim.keymap.set("n", "<F5>", function ()
+    dap.continue()
+    vim.cmd('NvimTreeClose')
+end)
+vim.keymap.set("n", "<F1>", ":lua require'dap'.step_into()<CR>")
+vim.keymap.set("n", "<F2>", ":lua require'dap'.step_over()<CR>")
 vim.keymap.set("n", "<F3>", ":lua require'dap'.step_out()<CR>")
 vim.keymap.set("n", "<leader>dr", ":lua require'dap'.repl.open()<CR>")
 vim.keymap.set("n", "<leader>td", ":lua require'dap-go'.debug_test()<CR>")
