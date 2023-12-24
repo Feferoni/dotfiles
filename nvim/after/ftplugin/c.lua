@@ -7,3 +7,5 @@ vim.opt_local.foldlevelstart = 20
 vim.opt_local.foldlevel = 20
 -- vim.opt_local.foldnestmax = 3
 vim.opt_local.foldminlines = 1
+
+vim.bo.commentstring = "//%s"
