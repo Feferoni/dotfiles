@@ -2,26 +2,8 @@ local mason = require("mason")
 mason.setup()
 
 local lsp = require('lsp-zero')
-
--- lsp.preset('recommended')
 lsp.preset({})
 
-local cmp = require('cmp')
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-cmp.setup({
-    window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
-    },
-    mapping = cmp.mapping.preset.insert({
-        ['<A-k>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<A-j>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<A-a>'] = cmp.mapping.confirm({ select = true }),
-        ["<A-s>"] = cmp.mapping.complete(),
-        ['<Tab>'] = nil,
-        ['<S-Tab>'] = nil,
-    })
-})
 lsp.set_preferences({
     suggest_lsp_servers = false,
     sign_icons = {
@@ -32,31 +14,126 @@ lsp.set_preferences({
     }
 })
 
+local kind_icons = {
+    Text = "",
+    Method = "m",
+    Function = "󰊕",
+    Constructor = "",
+    Field = "",
+    Variable = "",
+    Class = "",
+    Interface = "",
+    Module = "",
+    Property = " ",
+    Unit = "",
+    Value = "󰎠",
+    Enum = "",
+    Keyword = "󰌋",
+    Snippet = "",
+    Color = "󰏘",
+    File = "󰈙",
+    Reference = "",
+    Folder = "󰉋",
+    EnumMember = "",
+    Constant = "󰏿",
+    Struct = "",
+    Event = "",
+    Operator = "󰆕",
+    TypeParameter = " ",
+}
+
+local ls = require('luasnip')
+local cmp = require('cmp')
+local cmp_select = { behavior = cmp.SelectBehavior.Select }
+cmp.setup({
+    sorting = {
+        comparators = {
+            cmp.config.compare.offset,
+            cmp.config.compare.exact,
+            cmp.config.compare.recently_used,
+            require("clangd_extensions.cmp_scores"),
+            cmp.config.compare.kind,
+            cmp.config.compare.sort_text,
+            cmp.config.compare.length,
+            cmp.config.compare.order,
+        },
+    },
+    snippet = {
+        expand = function(args)
+            ls.lsp_expand(args.body)
+        end,
+    },
+    formatting = {
+        fields = { "kind", "abbr", "menu" },
+        format = function(entry, item)
+            item.menu = ({
+                buffer = "[Buffer]",
+                nvim_lsp = "[LSP]",
+                luasnip = "[Snippet]",
+                -- nvim_lsp_signature_help = "[LSP_SIG]",
+            })[entry.source.name] or 0
+            item.dup = ({
+                vsnip = 0,
+                nvim_lsp = 0,
+                nvim_lua = 0,
+                buffer = 0,
+            })[entry.source.name] or 0
+            item.kind = string.format("%s", kind_icons[item.kind])
+            return item
+        end,
+    },
+    mapping = cmp.mapping.preset.insert({
+        ['<A-k>'] = cmp.mapping.select_prev_item(cmp_select),
+        ['<A-j>'] = cmp.mapping.select_next_item(cmp_select),
+        ['<A-a>'] = cmp.mapping.confirm({ select = true }),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ["<A-s>"] = cmp.mapping.complete(),
+        ['<Tab>'] = nil,
+        ['<S-Tab>'] = nil,
+    }),
+    sources = cmp.config.sources({
+        {
+            name = 'nvim_lsp',
+            entry_filter = function(entry, _)
+                return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
+            end
+        },
+        { name = 'luasnip' },
+        -- { name = 'nvim_lsp_signature_help' },
+        { name = "path" },
+    }, {
+        { name = 'buffer' },
+    }),
+    duplicates = {
+        nvim_lsp = 1,
+        luasnip = 1,
+        buffer = 1,
+        path = 1,
+    },
+    window = {
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
+    },
+    experimental = {
+        ghost_text = false,
+        native_menu = false,
+    },
+})
+require("luasnip.loaders.from_vscode").lazy_load()
+
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 local lsp_config = require('lspconfig')
-local util = lsp_config.util
-lsp_config.elixirls.setup{
-  cmd = { "/home/feferoni/git/elixir-ls/apps/elixir_ls_utils/priv/language_server.sh" },
-  capabilities = capabilities,
-  flags = {
-    debounce_text_changes = 150,
-  },
-  elixirLS = {
-    dialyzerEnabled = false,
-    fetchDeps = false,
-  };
-}
-
-
 lsp_config.cmake.setup({
+    capabilities = capabilities,
     cmd = {
         "cmake-language-server"
     }
 })
 
 lsp_config.bashls.setup({
+    capabilities = capabilities,
     cmd = {
         "bash-language-server",
         "start"
@@ -65,12 +142,12 @@ lsp_config.bashls.setup({
         "sh",
     },
     settings = {
-        util.find_git_ancestor
     },
     single_file_support = true,
 })
 
 lsp_config.pyright.setup({
+    capabilities = capabilities,
     cmd = {
         "pyright-langserver",
         "--stdio"
@@ -78,6 +155,7 @@ lsp_config.pyright.setup({
 })
 
 lsp_config.lua_ls.setup({
+    capabilities = capabilities,
     cmd = {
         "lua-language-server",
         "--stdio"
@@ -93,6 +171,7 @@ lsp_config.lua_ls.setup({
 })
 
 lsp_config.clangd.setup({
+    capabilities = capabilities,
     cmd = {
         "clangd",
         "-j=10",
@@ -107,15 +186,42 @@ lsp_config.clangd.setup({
     },
 })
 
--- LSP settings.
---  This function gets run when an LSP connects to a particular buffer.
-lsp.on_attach(function(_, bufnr)
-    -- NOTE: Remember that lua is a real programming language, and as such it is possible
-    -- to define small helper and utility functions so you don't have to repeat yourself
-    -- many times.
-    --
-    -- In this case, we create a function that lets us more easily define mappings specific
-    -- for LSP related items. It sets the mode, buffer and description for us each time.
+
+lsp.on_attach(function(client, bufnr)
+    if client.server_capabilities.signatureHelpProvider then
+        vim.keymap.set("n", "<C-s>", function()
+            vim.cmd('LspOverloadsSignature')
+        end, { noremap = true, silent = true })
+        vim.keymap.set("i", "<C-s>", function()
+            vim.cmd('LspOverloadsSignature')
+        end, { noremap = true, silent = true })
+        require('lsp-overloads').setup(client, {
+            ui = {
+                border = "single",
+                height = nil,
+                width = nil,
+                wrap = true,
+                wrap_at = nil,
+                max_width = nil,
+                max_height = nil,
+                close_events = { "CursorMoved", "BufHidden", "InsertLeave" },
+                focusable = true,
+                focus = false,
+                offset_x = 0,
+                offset_y = 0,
+                floating_window_above_cur_line = false,
+                silent = true,
+            },
+            keymaps = {
+                next_signature = "<C-j>",
+                previous_signature = "<C-k>",
+                next_parameter = "<C-l>",
+                previous_parameter = "<C-h>",
+                close_signature = "<C-s>"
+            },
+            display_automatically = false,
+        })
+    end
     local nmap = function(keys, func, desc)
         if desc then
             desc = 'LSP: ' .. desc
@@ -124,7 +230,7 @@ lsp.on_attach(function(_, bufnr)
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
 
-    nmap('rn', function ()
+    nmap('rn', function()
         vim.lsp.buf.rename()
         vim.cmd("wa")
     end, '[R]e[n]ame')
@@ -151,7 +257,6 @@ lsp.on_attach(function(_, bufnr)
     nmap('<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
     nmap('gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
 
-    -- Create a command `:Format` local to the LSP buffer
     vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
         if vim.lsp.buf.format then
             vim.lsp.buf.format()
@@ -163,13 +268,15 @@ end)
 
 lsp.setup()
 
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
 
 vim.diagnostic.config({
-    virtual_text = false,
+    virtual_text = true,
     signs = true,
     underline = true,
     update_in_insert = false,
-    severity_sort = true,
+    severity_sort = false,
     float = {
         focusable = false,
         style = "minimal",
@@ -179,4 +286,3 @@ vim.diagnostic.config({
         prefix = "",
     },
 })
-

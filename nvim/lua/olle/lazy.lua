@@ -1,13 +1,13 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git",
-    "clone",
-    "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable", -- latest stable release
-    lazypath,
-  })
+    vim.fn.system({
+        "git",
+        "clone",
+        "--filter=blob:none",
+        "https://github.com/folke/lazy.nvim.git",
+        "--branch=stable", -- latest stable release
+        lazypath,
+    })
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -42,7 +42,7 @@ local plugins = {
     { 'p00f/clangd_extensions.nvim' },
     { 'cohama/lexima.vim' },
     { 'neovim/nvim-lspconfig' },
-    { 'williamboman/mason.nvim', build = function() pcall(vim.cmd, 'MasonInstall') end },
+    { 'williamboman/mason.nvim',              build = function() pcall(vim.cmd, 'MasonInstall') end },
     { 'williamboman/mason-lspconfig.nvim' },
     {
         'VonHeikemen/lsp-zero.nvim',
@@ -53,10 +53,21 @@ local plugins = {
 
         }
     },
+    -- { 'hrsh7th/cmp-nvim-lsp-signature-help' },
+    {
+        'Issafalcon/lsp-overloads.nvim',
+        tag = "v1.3.1"
+    },
+    { 'rafamadriz/friendly-snippets' },
     { 'hrsh7th/nvim-cmp', },
     { 'saadparwaiz1/cmp_luasnip' },
     { 'hrsh7th/cmp-nvim-lsp' },
-    { 'L3MON4D3/LuaSnip', build = "make install_jsregexp", version = "v2.1.1" },
+    {
+        'L3MON4D3/LuaSnip',
+        build = "make install_jsregexp",
+        version = "v2.1.1",
+        dependencies = { 'rafamadriz/friendly-snippets' },
+    },
     { 'mfussenegger/nvim-dap' },
     { 'rcarriga/nvim-dap-ui' },
     { 'theHamsta/nvim-dap-virtual-text' },

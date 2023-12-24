@@ -2,10 +2,7 @@ local ls = require('luasnip')
 local types = require('luasnip.util.types')
 
 ls.config.set_config {
-    -- this tells luasnip to remember to keep around the last snippet.
-    -- You can jump back into it even if you move outside of the selection
     history = true,
-    -- this one is cool cause if you have dynamic snippets, it updates as you type!
     updateevents = "TextChanged,TextChangedI",
     enable_autosnippets = true,
     ext_opts = {
@@ -16,6 +13,8 @@ ls.config.set_config {
         },
     },
 }
+
+vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
 
 vim.keymap.set({ "i", "s" }, "<M-l>", function()
     if ls.expand_or_jumpable() then
@@ -29,10 +28,14 @@ vim.keymap.set({ "i", "s" }, "<M-h>", function()
     end
 end, { noremap = true, silent = true })
 
+vim.keymap.set({"i", "s"}, "<C-E>", function()
+	if ls.choice_active() then
+		ls.change_choice(1)
+	end
+end, {silent = true})
+
 vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>")
 
-
--- short hands for lua snippets
 local s = ls.snippet
 local sn = ls.snippet_node
 local isn = ls.indent_snippet_node
@@ -59,34 +62,3 @@ local types = require("luasnip.util.types")
 local parse = require("luasnip.util.parser").parse_snippet
 local ms = ls.multi_snippet
 local k = require("luasnip.nodes.key_indexer").new_key
-
-ls.add_snippets("all", {
-    s("class_5",
-        fmt([[
-    class {}
-    {{
-    public:
-        explicit {}();
-        {}() = default;
-        ~{}() = default;
-        {}(const {}& other) = delete;
-        {}& operator=(const {}& other) = delete;
-        {}({}&& other) = delete;
-        {}& operator=({}&& other) = delete;
-
-    private:
-    }};
-    ]], { i(1, "className"), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1), rep(1) })),
-    s("class_mock",
-        fmt([[
-    #include <gmock.h>
-
-    #include "{}.h"
-
-    class Mock{} : public {}
-    {{
-    public: 
-        
-    }}
-    ]], { i(1, "mockName"), rep(1), rep(1) }))
-})
