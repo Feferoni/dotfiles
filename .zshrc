@@ -139,6 +139,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+setopt noincappendhistory
+setopt nosharehistory
+
 if [ -z "${SOURCED_RC}" ] && [ "$(uname -r | grep -i microsoft)" ]; then
     export PATH=$(echo "$PATH" | sed -e 's/:\/mnt[^:]*//g')
     export PATH=/mnt/c/Windows/System32:$PATH
