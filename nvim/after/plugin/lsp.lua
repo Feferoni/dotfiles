@@ -1,6 +1,16 @@
 local mason = require("mason")
 mason.setup()
 
+local null_ls = require("null-ls")
+null_ls.setup({
+    sources = {
+        -- null_ls.builtins.formatting.black,
+        null_ls.builtins.formatting.yapf,
+        -- null_ls.builtins.formatting.autopep8,
+        -- null_ls.builtins.formatting.isort,
+    },
+})
+
 local lsp = require('lsp-zero')
 lsp.preset({})
 
@@ -146,12 +156,11 @@ lsp_config.bashls.setup({
     single_file_support = true,
 })
 
-lsp_config.pyright.setup({
+lsp_config.jedi_language_server.setup({
     capabilities = capabilities,
-    cmd = {
-        "pyright-langserver",
-        "--stdio"
-    },
+    cmd = { "jedi-language-server" },
+    filetypes = { "python" },
+    single_file_support = true,
 })
 
 lsp_config.lua_ls.setup({

@@ -3,6 +3,7 @@ export PATH=$HOME/programs/node-v20.0.0-linux-x64/lib/node_modules:$PATH
 export PATH=$HOME/git/elixir/bin:$PATH
 export PATH=$HOME/git/otp/bin:$PATH
 export PATH=$HOME/.local/share/nvim/mason/bin/:$PATH
+export PATH=$HOME/.local/bin/:$PATH
 export PATH=/usr/local/lib/node_modules/:$PATH
 export PATH=/usr/local/go/bin:$PATH
 export PATH=/snap/bin/:$PATH

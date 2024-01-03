@@ -16,7 +16,7 @@ is_wsl() {
 }
 
 install_with_apt() {
-    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf ninja-build)
+    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf ninja-build clang-tidy ccache)
 
     colored_echo "Using apt-get to install packages..."
     sudo apt-get update
@@ -43,6 +43,8 @@ install_with_apt() {
     sudo snap install bash-language-server --classic
     sudo snap install pyright --classic
     sudo snap install gopls --classic
+    pip install -u yapf jedi-language-server
+    done
 }
 
 install_with_pacman() {
@@ -68,6 +70,9 @@ install_pre_requisites() {
 create_symlink_with_backup() {
 	local src_file="$1"
     local dest_dir="$HOME"
+    if [ -n "$2" ]; then
+        dest_dir="$2"
+    fi
 
     if [ -z "$src_file" ] || [ -z "$dest_dir" ]; then
         colored_echo "Usage: create_symlink_with_backup source_file destination_directory"
@@ -166,9 +171,12 @@ if [ "$misc_install" = "y" ]; then
     colored_echo "Downloading base16 shell colors"
     git clone https://github.com/tinted-theming/base16-shell.git $HOME/.config/base16-shell
     create_symlink_with_backup "$dotfile_repo_location/.gitconfig"
+
+    mkdir -p $HOME/.config/yapf/
+    create_symlink_with_backup "$dotfile_repo_location/style" "$HOME/.config/yapf"
 fi
 
-colored_echo "Do you want to install cargod? This will also download fd-find and bat. y for install:"
+colored_echo "Do you want to install cargo? This will also download fd-find and bat. y for install:"
 read -r cargo_install
 if [ "$cargo_install" = "y" ]; then
     curl https://sh.rustup.rs -sSf | sh

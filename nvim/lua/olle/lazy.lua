@@ -65,6 +65,7 @@ local plugins = {
 
         }
     },
+    { "jose-elias-alvarez/null-ls.nvim" },
     -- { 'hrsh7th/cmp-nvim-lsp-signature-help' },
     {
         'Issafalcon/lsp-overloads.nvim',
