@@ -37,6 +37,7 @@ require('telescope').setup {
                 ['<C-d>'] = false,
                 ["<C-j>"] = actions.move_selection_next,
                 ["<C-k>"] = actions.move_selection_previous,
+                ["<C-f>"] = actions.to_fuzzy_refine
             },
         },
     },
@@ -86,6 +87,7 @@ vim.keymap.set('n', '<leader>/', function()
     })
 end, { desc = '[/] Fuzzily search in current buffer]' })
 
+vim.keymap.set('n', '<leader>sa', builtin.resume, { desc = '[S]earch [A]gain' })
 vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
