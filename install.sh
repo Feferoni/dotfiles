@@ -113,6 +113,9 @@ if [ "$tmux_install" = "y" ]; then
         git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm > /dev/null
     fi
 
+    mkdir -p $HOME/bin
+    ln -s "$dotfile_repo_location/bin/tmux_switch_session.sh $HOME/bin/"
+
     colored_echo "Tmux is setup, when opening tmux the next time press \"tmux prefix + I\" to install tmux plugins"
 fi
 
