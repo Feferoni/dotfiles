@@ -33,11 +33,11 @@ require('telescope').setup {
                 ["<LeftMouse>"] = actions.select_default,
                 ["<ScrollWheelDown>"] = actions.move_selection_next,
                 ["<ScrollWheelUp>"] = actions.move_selection_previous,
-                ['<C-u>'] = false,
-                ['<C-d>'] = false,
                 ["<C-j>"] = actions.move_selection_next,
                 ["<C-k>"] = actions.move_selection_previous,
-                ["<C-f>"] = actions.to_fuzzy_refine
+                ["<C-f>"] = actions.to_fuzzy_refine,
+                ["<C-h>"] = actions.cycle_history_prev,
+                ["<C-l>"] = actions.cycle_history_next,
             },
         },
     },
@@ -135,7 +135,3 @@ vim.keymap.set('n', '<leader>sp', function()
     local opts = {}
     telescope_prettier.project_files(opts, builtin.git_files)
 end, { desc = '[S]earch git [P]roject' })
-
-
--- vim.keymap.set("n", "<Leader>sr", "<CMD>lua require('telescope').extensions.git_worktree.git_worktrees()<CR>", silent)
--- vim.keymap.set("n", "<Leader>sR", "<CMD>lua require('telescope').extensions.git_worktree.create_git_worktree()<CR>", silent)
