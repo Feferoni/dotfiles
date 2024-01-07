@@ -1,6 +1,8 @@
 local mason = require("mason")
 mason.setup()
 
+require('fidget').setup({})
+
 local null_ls = require("null-ls")
 null_ls.setup({
     sources = {

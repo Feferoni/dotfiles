@@ -72,9 +72,12 @@ local plugins = {
         tag = "v1.3.1"
     },
     { 'rafamadriz/friendly-snippets' },
-    { 'hrsh7th/nvim-cmp', },
     { 'saadparwaiz1/cmp_luasnip' },
+    { 'hrsh7th/nvim-cmp', },
     { 'hrsh7th/cmp-nvim-lsp' },
+    { 'hrsh7th/cmp-buffer' },
+    { 'hrsh7th/cmp-path' },
+    { 'hrsh7th/cmp-cmdline' },
     {
         'L3MON4D3/LuaSnip',
         build = "make install_jsregexp",
@@ -89,6 +92,7 @@ local plugins = {
     { 'tpope/vim-fugitive' },
     { 'lewis6991/gitsigns.nvim' },
     { 'tinted-theming/base16-vim' },
+    { "j-hui/fidget.nvim" },
     { 'Feferoni/build-system.nvim' },
     { 'Feferoni/goto-path.nvim' },
 }
