@@ -24,7 +24,7 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- leader y to paste into the copy clipboard
-if require("olle.wsl_check").is_wsl() then
+if require("feferoni.wsl_check").is_wsl() then
     vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>")
 else
     vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])

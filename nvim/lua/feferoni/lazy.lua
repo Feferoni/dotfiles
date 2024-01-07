@@ -51,26 +51,28 @@ local plugins = {
     { 'nvim-tree/nvim-web-devicons' },
     { 'mg979/vim-visual-multi' },
     { 'nvim-treesitter/completion-treesitter' },
-    { 'p00f/clangd_extensions.nvim' },
     { 'cohama/lexima.vim' },
     { 'neovim/nvim-lspconfig' },
-    { 'williamboman/mason.nvim',              build = function() pcall(vim.cmd, 'MasonInstall') end },
-    { 'williamboman/mason-lspconfig.nvim' },
     {
-        'VonHeikemen/lsp-zero.nvim',
+        'williamboman/mason.nvim',
+        build = function()
+            pcall(vim.cmd, 'MasonInstall')
+        end,
         dependencies = {
-            { 'neovim/nvim-lspconfig', },
-            { 'williamboman/mason.nvim', },
-            { 'williamboman/mason-lspconfig.nvim' },
-
-        }
+            'williamboman/mason-lspconfig.nvim',
+            'neovim/nvim-lspconfig',
+            'jose-elias-alvarez/null-ls.nvim',
+            'p00f/clangd_extensions.nvim',
+        },
     },
+    { 'p00f/clangd_extensions.nvim' },
+    { 'williamboman/mason-lspconfig.nvim' },
     { "jose-elias-alvarez/null-ls.nvim" },
-    -- { 'hrsh7th/cmp-nvim-lsp-signature-help' },
     {
         'Issafalcon/lsp-overloads.nvim',
         tag = "v1.3.1"
     },
+    { "j-hui/fidget.nvim" },
     { 'rafamadriz/friendly-snippets' },
     { 'saadparwaiz1/cmp_luasnip' },
     { 'hrsh7th/nvim-cmp', },
@@ -92,7 +94,6 @@ local plugins = {
     { 'tpope/vim-fugitive' },
     { 'lewis6991/gitsigns.nvim' },
     { 'tinted-theming/base16-vim' },
-    { "j-hui/fidget.nvim" },
     { 'Feferoni/build-system.nvim' },
     { 'Feferoni/goto-path.nvim' },
 }

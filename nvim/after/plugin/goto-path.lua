@@ -1,5 +1,5 @@
 local goto_path = require('goto-path')
-local telescope_prettier = require('olle.telescope_prettier')
+local telescope_prettier = require('feferoni.telescope_prettier')
 
 goto_path.setup({
     replacement_table = {

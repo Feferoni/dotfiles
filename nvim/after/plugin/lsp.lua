@@ -1,7 +1,13 @@
 local mason = require("mason")
 mason.setup()
 
-require('fidget').setup({})
+require('fidget').setup({
+    integration = {
+        ["nvim-tree"] = {
+            enable = true,
+        },
+    },
+})
 
 local null_ls = require("null-ls")
 null_ls.setup({
@@ -13,19 +19,6 @@ null_ls.setup({
     },
 })
 
-local lsp = require('lsp-zero')
-lsp.preset({})
-
-lsp.set_preferences({
-    suggest_lsp_servers = false,
-    sign_icons = {
-        error = 'E',
-        warn = 'W',
-        hint = 'H',
-        info = 'I'
-    }
-})
-
 local kind_icons = {
     Text = "",
     Method = "m",
@@ -34,7 +27,7 @@ local kind_icons = {
     Field = "",
     Variable = "",
     Class = "",
-    Interface = "",
+   Interface = "",
     Module = "",
     Property = " ",
     Unit = "",
@@ -82,7 +75,6 @@ cmp.setup({
                 buffer = "[Buffer]",
                 nvim_lsp = "[LSP]",
                 luasnip = "[Snippet]",
-                -- nvim_lsp_signature_help = "[LSP_SIG]",
             })[entry.source.name] or 0
             item.dup = ({
                 vsnip = 0,
@@ -106,12 +98,8 @@ cmp.setup({
     sources = cmp.config.sources({
         {
             name = 'nvim_lsp',
-            -- entry_filter = function(entry, _)
-            --     return require('cmp.types').lsp.CompletionItemKind[entry:get_kind()] ~= 'Text'
-            -- end
         },
         { name = 'luasnip' },
-        -- { name = 'nvim_lsp_signature_help' },
         { name = "path" },
     }, {
         { name = 'buffer' },
@@ -133,79 +121,9 @@ cmp.setup({
 })
 require("luasnip.loaders.from_vscode").lazy_load()
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
-local lsp_config = require('lspconfig')
-lsp_config.cmake.setup({
-    capabilities = capabilities,
-    cmd = {
-        "cmake-language-server"
-    }
-})
-
-lsp_config.bashls.setup({
-    capabilities = capabilities,
-    cmd = {
-        "bash-language-server",
-        "start"
-    },
-    filetypes = {
-        "sh",
-    },
-    settings = {
-    },
-    single_file_support = true,
-})
-
-lsp_config.jedi_language_server.setup({
-    capabilities = capabilities,
-    cmd = { "jedi-language-server" },
-    filetypes = { "python" },
-    single_file_support = true,
-})
-
-lsp_config.lua_ls.setup({
-    capabilities = capabilities,
-    cmd = {
-        "lua-language-server",
-        "--stdio"
-    },
-    autostart = true,
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { 'vim' }
-            }
-        }
-    }
-})
-
-lsp_config.clangd.setup({
-    capabilities = capabilities,
-    cmd = {
-        "clangd",
-        "-j=10",
-        "--background-index",
-        "--all-scopes-completion",
-        "--header-insertion=never",
-        "--recovery-ast",
-        "--pch-storage=disk",
-        "--log=info",
-        "--clang-tidy",
-        "--enable-config",
-    },
-})
-
-
-lsp.on_attach(function(client, bufnr)
+local on_attach_signature_help = function(client)
     if client.server_capabilities.signatureHelpProvider then
-        vim.keymap.set("n", "<C-s>", function()
-            vim.cmd('LspOverloadsSignature')
-        end, { noremap = true, silent = true })
-        vim.keymap.set("i", "<C-s>", function()
-            vim.cmd('LspOverloadsSignature')
-        end, { noremap = true, silent = true })
         require('lsp-overloads').setup(client, {
             ui = {
                 border = "single",
@@ -233,51 +151,151 @@ lsp.on_attach(function(client, bufnr)
             display_automatically = false,
         })
     end
-    local nmap = function(keys, func, desc)
-        if desc then
-            desc = 'LSP: ' .. desc
-        end
+end
 
-        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+local setup_lsp = function (server_name, opts)
+    opts = opts or {}
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+    opts.capabilities = capabilities or {}
+    opts.on_attach = function (client, _)
+        on_attach_signature_help(client)
     end
 
-    nmap('rn', function()
-        vim.lsp.buf.rename()
-        vim.cmd("wa")
-    end, '[R]e[n]ame')
-    nmap('ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
-    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-    nmap('gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+    local server = require("lspconfig")[server_name]
+    server.setup(opts)
+end
 
-    nmap('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-    nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
-    nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+require("mason-lspconfig").setup({
+    ensure_installed = {
+        "bashls",
+        "lua_ls",
+        "clangd",
+        "jedi_language_server",
+    },
+    handlers = {
+        function(server_name)
+            local opts = {}
+            setup_lsp(server_name, opts)
+        end,
+        ["cmake"] = function(server_name)
+            local opts = {
+                cmd = {
+                    "cmake-language-server"
+                }
+            }
+            setup_lsp(server_name, opts)
+        end,
+        ["bashls"] = function(server_name)
+            local opts = {
+                cmd = {
+                    "bash-language-server",
+                    "start"
+                },
+                filetypes = {
+                    "sh",
+                },
+                settings = {
+                },
+                single_file_support = true,
+            }
+            setup_lsp(server_name, opts)
+        end,
+        ["lua_ls"] = function(server_name)
+            local opts = {
+                cmd = {
+                    "lua-language-server",
+                    "--stdio"
+                },
+                autostart = true,
+                settings = {
+                    Lua = {
+                        diagnostics = {
+                            globals = { 'vim' }
+                        }
+                    }
+                }
+            }
+            setup_lsp(server_name, opts)
+        end,
+        ["clangd"] = function(server_name)
+            local opts = {
+                cmd = {
+                    "clangd",
+                    "-j=10",
+                    "--background-index",
+                    "--all-scopes-completion",
+                    "--header-insertion=never",
+                    "--recovery-ast",
+                    "--pch-storage=disk",
+                    "--log=info",
+                    "--clang-tidy",
+                    "--enable-config",
+                },
+            }
+            setup_lsp(server_name, opts)
+        end,
+        ["jedi_language_server"] = function(server_name)
+            local opts = {
+                cmd = { "jedi-language-server" },
+                filetypes = { "python" },
+                single_file_support = true,
+            }
+            setup_lsp(server_name, opts)
+        end,
+    },
 
-    nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-    nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-    nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-    nmap('<leader>wl', function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, '[W]orkspace [L]ist Folders')
+})
 
-    require("clangd_extensions.inlay_hints").setup_autocmd()
-    require("clangd_extensions.inlay_hints").set_inlay_hints()
-    nmap('<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
-    nmap('gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
+vim.api.nvim_create_autocmd('LspAttach', {
+    group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+    callback = function(ev)
+        vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+        local opts = { buffer = ev.buf }
 
-    vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
-        if vim.lsp.buf.format then
-            vim.lsp.buf.format()
-        elseif vim.lsp.buf.formatting then
-            vim.lsp.buf.formatting()
+        local nmap = function(mode, keys, func, desc)
+            if desc then
+                desc = 'LSP: ' .. desc
+                opts.desc = desc
+            end
+
+            vim.keymap.set(mode, keys, func, opts)
         end
-    end, { desc = 'Format current buffer with LSP' })
-end)
 
-lsp.setup()
+        nmap('n', 'rn', function()
+            vim.lsp.buf.rename()
+            vim.cmd("wa")
+        end, '[R]e[n]ame')
+        nmap('n', 'ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+        nmap('n', 'gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+        nmap('n', 'gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
+        nmap('n', '<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+        nmap('n', '<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+        nmap('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+        nmap('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+        nmap('n', 'K', vim.lsp.buf.hover, 'Hover Documentation')
+        nmap('n', '<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+        nmap('n', 'gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+        nmap('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
+        nmap('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
+        nmap('n', '<leader>wl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, '[W]orkspace [L]ist Folders')
+        nmap('n', '<leader>f', function()
+            vim.lsp.buf.format { async = true }
+        end, '[F]ormat file')
+        require("clangd_extensions.inlay_hints").setup_autocmd()
+        require("clangd_extensions.inlay_hints").set_inlay_hints()
+        nmap('n', '<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
+        nmap('n', 'gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
+        nmap('i', "<C-s>", function ()
+            vim.cmd('LspOverloadsSignature')
+        end, "LspoverloadsSignature")
+        nmap('n', "<C-s>", function ()
+            vim.cmd('LspOverloadsSignature')
+        end, "LspoverloadsSignature")
+    end,
+})
 
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
 vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })

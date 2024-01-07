@@ -1,0 +1,7 @@
+require("feferoni.lazy")
+require("feferoni.autocmds")
+require("feferoni.remap")
+require("feferoni.set")
+require("feferoni.wsl_check")
+require("feferoni.telescope_prettier")
+require("feferoni.globals")
