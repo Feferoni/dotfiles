@@ -45,12 +45,10 @@ return {
             end
         end, { silent = true })
 
-        ls.filetype_extend("c", { "cdoc" })
-        ls.filetype_extend("cpp", { "cppdoc" })
-        ls.filetype_extend("python", { "pydoc" })
-        ls.filetype_extend("sh", { "shelldoc" })
-
-        vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>")
+        -- ls.filetype_extend("c", { "cdoc" })
+        -- ls.filetype_extend("cpp", { "cppdoc" })
+        -- ls.filetype_extend("python", { "pydoc" })
+        -- ls.filetype_extend("sh", { "shelldoc" })
 
         local s = ls.snippet
         local sn = ls.snippet_node
