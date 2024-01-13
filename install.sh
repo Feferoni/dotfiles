@@ -11,6 +11,10 @@ colored_echo() {
 
 dotfile_repo_location=$PWD
 
+if [ ! -f "$HOME/.configRepoPath" ]; then
+    cat <<< "$dotfile_repo_location" > "$HOME/.configRepoPath"
+fi
+
 is_wsl() {
     grep -ic Microsoft /proc/version
 }

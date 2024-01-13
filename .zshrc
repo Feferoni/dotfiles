@@ -1,3 +1,28 @@
+function check_and_pull_repo() {
+    if [ ! -f "$HOME/.configRepoPath" ]; then
+        echo "Setup the file $HOME/.configRepoPath with the path to the config repo."
+        return 0
+    fi
+
+    local repo_path=$(cat "$HOME/.configRepoPath")
+    if [[ -d "${repo_path}/.git" ]]; then
+        echo "Checking for updates in the repository: $repo_path"
+
+        local before_pull_hash=$(git -C "$repo_path" rev-parse HEAD)
+        git -C "$repo_path" pull
+        local after_pull_hash=$(git -C "$repo_path" rev-parse HEAD)
+
+        if [ "$before_pull_hash" != "$after_pull_hash" ]; then
+            echo "Repository updated. Re-sourcing .zshrc."
+            source "$HOME/.zshrc"
+        fi
+    else
+        echo "Directory $repo_path is not a Git repository."
+    fi
+}
+
+check_and_pull_repo
+
 export PATH=$HOME/programs/node-v20.0.0-linux-x64/bin:$PATH
 export PATH=$HOME/programs/node-v20.0.0-linux-x64/lib/node_modules:$PATH
 export PATH=$HOME/git/elixir/bin:$PATH
