@@ -11,7 +11,7 @@ cd dotfiles
 ```
 ls | grep \.png$ | sed 'p;s/\.png/\.jpg/' | xargs -n2 mv
 ```
-### Search and replace in certain files:
+### Search and replace in certain files
 Example with fd:
 ```
 fd -e cpp -0 | xargs -0 sed -i 's/oldtext/newtext/g'
