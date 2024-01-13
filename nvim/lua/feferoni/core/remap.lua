@@ -24,7 +24,7 @@ vim.keymap.set("n", "N", "Nzzzv")
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- leader y to paste into the copy clipboard
-if require("feferoni.wsl_check").is_wsl() then
+if require("feferoni.core.wsl_check").is_wsl() then
     vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>")
 else
     vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
@@ -91,8 +91,8 @@ local copy_text_to_clipboard = function(text)
     vim.fn.system(command)
 end
 
-local path = require('plenary.path')
 vim.keymap.set("n", "<leader>cfp", function()
+    local path = require('plenary.path')
     local current_file = path:new(vim.fn.expand('%:p'))
     local current_folder = tostring(current_file:parent())
     copy_text_to_clipboard(current_folder .. "/")

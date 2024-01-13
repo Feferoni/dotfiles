@@ -1,4 +1,4 @@
-function ColorMyPencils(color)
+local function SetColorScheme()
     vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
     vim.api.nvim_set_hl(0, "NormalFloat", { fg = "none", bg = "none" })
     vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#83a598" })
@@ -14,16 +14,11 @@ function ColorMyPencils(color)
         cmd("source " .. set_theme_path)
     end
 end
-ColorMyPencils()
 
-local SetColor = function ()
-    -- vim.api.nvim_set_hl(0, "FloatBorder", { fg = "none", bg = "none" })
-    -- vim.api.nvim_set_hl(0, "NormalFloat", { fg = "none", bg = "none" })
-end
-
-local myGroup = vim.api.nvim_create_augroup("SetColor", { clear = true })
-
-vim.api.nvim_create_autocmd("VimEnter", {
-    group = myGroup,
-    callback = SetColor
-})
+return {
+    'tinted-theming/base16-vim',
+    priority = 1000,
+    config = function()
+        SetColorScheme()
+    end
+}

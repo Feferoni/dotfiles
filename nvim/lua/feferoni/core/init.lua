@@ -1,0 +1,5 @@
+require("feferoni.core.remap")
+require("feferoni.core.set")
+require("feferoni.core.wsl_check")
+require("feferoni.core.globals")
+require("feferoni.core.autocmds")

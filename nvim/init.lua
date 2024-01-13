@@ -1,2 +1,3 @@
 vim.loader.enable()
-require("feferoni")
+require("feferoni.core")
+require("feferoni.lazy")
