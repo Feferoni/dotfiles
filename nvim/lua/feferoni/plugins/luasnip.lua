@@ -29,18 +29,26 @@ return {
                 ls.expand_or_jump()
             end
         end, { noremap = true, silent = true })
-
         vim.keymap.set({ "i", "s" }, "<M-h>", function()
             if ls.jumpable(-1) then
                 ls.jump(-1)
             end
         end, { noremap = true, silent = true })
-
-        vim.keymap.set({ "i", "s" }, "<C-E>", function()
+        vim.keymap.set({ "i", "s" }, "<M-k>", function()
             if ls.choice_active() then
                 ls.change_choice(1)
             end
         end, { silent = true })
+        vim.keymap.set({ "i", "s" }, "<M-j>", function()
+            if ls.choice_active() then
+                ls.change_choice(-1)
+            end
+        end, { silent = true })
+
+        ls.filetype_extend("c", { "cdoc" })
+        ls.filetype_extend("cpp", { "cppdoc" })
+        ls.filetype_extend("python", { "pydoc" })
+        ls.filetype_extend("sh", { "shelldoc" })
 
         vim.keymap.set("n", "<leader><leader>s", "<cmd>source ~/.config/nvim/after/plugin/luasnip.lua<CR>")
 
