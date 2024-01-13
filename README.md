@@ -6,6 +6,21 @@ cd dotfiles
 ./install.sh
 ```
 
+# Useful commands
+### Batch renaming of files
+```
+ls | grep \.png$ | sed 'p;s/\.png/\.jpg/' | xargs -n2 mv
+```
+### Search and replace in certain files:
+Example with fd:
+```
+fd -e cpp -0 | xargs -0 sed -i 's/oldtext/newtext/g'
+```
+Example with find:
+```
+find . -type f -name "*.cpp" -print0 | xargs -0 sed -i 's/oldtext/newtext/g'
+```
+
 ## Links
 [Neovim](https://github.com/neovim/neovim)
 
