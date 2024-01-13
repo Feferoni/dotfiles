@@ -1,14 +1,78 @@
 return {
-    'mfussenegger/nvim-dap',
+    "jay-babu/mason-nvim-dap.nvim",
     dependencies = {
+        'mfussenegger/nvim-dap',
         'rcarriga/nvim-dap-ui',
         'theHamsta/nvim-dap-virtual-text',
         'nvim-telescope/telescope-dap.nvim',
         'leoluz/nvim-dap-go',
     },
-    lazy = true,
-    keys = "<F5>",
     config = function()
+        require("mason-nvim-dap").setup({
+            ensure_installed = { "python", "codelldb" },
+            handlers = {
+                function(config)
+                    require('mason-nvim-dap').default_setup(config)
+                end,
+                python = function(config)
+                    config.adapters = {
+                        type = "executable",
+                        command = "/usr/bin/python3",
+                        args = {
+                            "-m",
+                            "debugpy.adapter",
+                        },
+                    }
+                    config.configurations = {
+                        {
+                            name = "Debug python script",
+                            type = "python",
+                            request = "launch",
+                            program = "${file}",
+                            args = function ()
+                                local input_args = vim.fn.input('Script arguments: ')
+                                return vim.split(input_args, " ")
+                            end
+                        }
+                    }
+                    require('mason-nvim-dap').default_setup(config) -- don't forget this!
+                end,
+                codelldb = function(config)
+                    config.adapters = {
+                        type = 'server',
+                        host = '127.0.0.1',
+                        port = "${port}",
+                        executable = {
+                            command = 'codelldb',
+                            args = { '--port', '${port}' }
+                        },
+                        options = {
+                            max_retries = 20
+                        }
+                    }
+                    config.configurations = {
+                        {
+                            name = 'C/CPP debugging with lldb',
+                            type = 'codelldb',
+                            request = 'launch',
+                            program = function()
+                                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/', 'file')
+                            end,
+                            cwd = '${workspaceFolder}/build',
+                            terminal = 'integrated',
+                            stopOnEntry = false,
+                            args = {},
+                            sourceMap = {
+                                ["/home/feferoni/git/AOC_2023_CPP/build/src/"] = "/home/feferoni/git/AOC_2023_CPP/dep_cache/catch2-src/src/",
+                            }
+                        }
+
+                    }
+                    require('mason-nvim-dap').default_setup(config)
+                end,
+            },
+        })
+
         require("nvim-dap-virtual-text").setup()
         require("dap-go").setup()
         require("dapui").setup({
@@ -92,36 +156,6 @@ return {
         dap.listeners.before.event_exited["dapui_config"] = function()
             dapui.close()
         end
-
-        dap.adapters.lldb = {
-            type = 'server',
-            host = '127.0.0.1',
-            port = "${port}",
-            executable = {
-                command = 'codelldb',
-                args = { '--port', '${port}' }
-            },
-            options = {
-                max_retries = 20
-            }
-        }
-
-        dap.configurations.cpp = {
-            {
-                name = 'Launch file',
-                type = 'lldb',
-                request = 'launch',
-                program = function()
-                    return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/', 'file')
-                end,
-                cwd = '${workspaceFolder}/build',
-                terminal = 'integrated',
-                stopOnEntry = false,
-                args = {},
-            }
-        }
-
-        dap.configurations.c = dap.configurations.cpp
 
         dap.set_log_level('DEBUG')
 
