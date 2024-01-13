@@ -51,21 +51,9 @@ install_with_apt() {
     done
 }
 
-install_with_pacman() {
-    programs_to_install=(git curl gettext unzip make cmake pkg-config build-essential tmux luajit zsh bash-language-server xclip ripgrep fzf)
-
-    colored_echo "Using pacman to install packages..."
-    sudo pacman -Sy
-    for program in "${programs_to_install[@]}"; do
-        sudo pacman -S --noconfirm "$program"
-    done
-}
-
 install_pre_requisites() {
 	if command -v apt-get >/dev/null 2>&1; then
 		install_with_apt
-	elif command -v pacman >/dev/null 2>&1; then
-		install_with_pacman
 	else
 		colored_echo "No known supported package manager found."
 	fi
