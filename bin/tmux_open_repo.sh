@@ -16,8 +16,10 @@ if [ -z "$GIT_FOLDER_PATH" ] || [ ! -d "$GIT_FOLDER_PATH" ]; then
     exit 1
 fi
 
-
-chosen_dir=$(find "$GIT_FOLDER_PATH" -maxdepth 1 -type d -printf "%f\n" | tail -n +2 | fzf --info inline --multi --header "Start and go to TMUX session.")
+current_tmux_session=$(tmux display-message -p '#S')
+active_tmux_sessions=$(tmux ls | cut -d':' -f1)
+project_directories=$(find "$GIT_FOLDER_PATH" -maxdepth 1 -type d -printf "%f\n" | tail -n +2)
+chosen_dir=$(echo -e "$active_tmux_sessions\n$project_directories" | sort -u | fzf --info inline --multi --header "Switch TMUX session. Current: ${current_tmux_session}")
 if [ -z "$chosen_dir" ]; then
     tmux display-message "No directory chosen."
     exit 1
@@ -35,3 +37,4 @@ else
     tmux send-keys -t "$chosen_dir" "cd \"$full_dir_path\"" C-m
     tmux switch-client -t "$chosen_dir"
 fi
+
