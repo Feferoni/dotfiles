@@ -1,37 +1,48 @@
 ######################################################################################
-### Update config repo, needs to be first
+### Functions
 ######################################################################################
+function get_dotfile_json_entry() {
+    local dotfile_path="$HOME/.dotfile_config.json"
+    if [ ! -f "$dotfile_path" ]; then
+        echo ""
+        return 0
+    fi
+    if ! command -v jq >/dev/null 2>&1; then
+        echo ""
+        return 0
+    fi
+
+    local query=$1
+    local jq_response=$(jq "$query" "$dotfile_path" | tr -d '"')
+    echo "$jq_response"
+}
 function check_and_pull_repo() {
     if [ "$SOURCED_RC" = true ]; then
         return 0
     fi
 
-    if [ ! -f "$HOME/.configRepoPath" ]; then
-        echo "Setup the file $HOME/.configRepoPath with the path to the config repo."
+    local dotfile_path=$(get_dotfile_json_entry '.dotfile_path')
+    local dotfile_path=${dotfile_path/\$HOME/$HOME} # expanding HOME var
+
+    if [ -z "$dotfile_path" ] || [ ! -d "$dotfile_path" ] || [ ! -d "$dotfile_path/.git" ]; then
+        echo "Invalid or nonexistent dotfile path: $dotfile_path"
         return 0
     fi
 
-    local repo_path=$(cat "$HOME/.configRepoPath")
-    if [[ -d "${repo_path}/.git" ]]; then
-        echo "Checking for updates in the repository: $repo_path"
+    echo "Checking for updates in the repository: $repo_path"
+    local before_pull_hash=$(git -C "$dotfile_path" rev-parse HEAD)
+    git -C "$dotfile_path" pull
+    local after_pull_hash=$(git -C "$dotfile_path" rev-parse HEAD)
 
-        local before_pull_hash=$(git -C "$repo_path" rev-parse HEAD)
-        git -C "$repo_path" pull
-        local after_pull_hash=$(git -C "$repo_path" rev-parse HEAD)
-
-        if [ "$before_pull_hash" != "$after_pull_hash" ]; then
-            echo "Repository updated. Re-sourcing .zshrc."
-            source "$HOME/.zshrc"
-        fi
-    else
-        echo "Directory $repo_path is not a Git repository."
+    if [ "$before_pull_hash" != "$after_pull_hash" ]; then
+        echo "Repository updated. Re-sourcing .zshrc."
+        source "$HOME/.zshrc"
     fi
+
+    export DOTFILE_PATH=$dotfile_path
 }
 check_and_pull_repo
 
-######################################################################################
-### Functions
-######################################################################################
 is_wsl() {
     grep -qic Microsoft /proc/version
 }

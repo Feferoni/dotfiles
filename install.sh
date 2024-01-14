@@ -11,8 +11,9 @@ colored_echo() {
 
 dotfile_repo_location=$PWD
 
-if [ ! -f "$HOME/.configRepoPath" ]; then
-    cat <<< "$dotfile_repo_location" > "$HOME/.configRepoPath"
+if [ ! -f "$HOME/.dotfile_config.json" ]; then
+   echo "Copying dotfile_config.json to home folder. Change config in here."
+   cp "$dotfile_repo_location/default_dotfile_config.json $HOME/.dotfile_config.json"
 fi
 
 is_wsl() {
@@ -20,7 +21,7 @@ is_wsl() {
 }
 
 install_with_apt() {
-    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh xclip ripgrep fzf ninja-build clang-tidy ccache)
+    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh jq xclip ripgrep fzf ninja-build clang-tidy ccache)
 
     colored_echo "Using apt-get to install packages..."
     sudo apt-get update
