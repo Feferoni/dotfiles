@@ -79,5 +79,5 @@ if [[ $SOCK ]]; then
 fi
 
 # No remote nvim, so just open in current pane
-tmux send-keys "nvim -c $FILE"
+tmux send-keys "nvim $FILE"
 tmux send-keys "C-m"
