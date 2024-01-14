@@ -94,6 +94,12 @@ if [ "$install_pre" = "y" ]; then
 	install_pre_requisites
 fi
 
+colored_echo "Do you want to symlink all scripts? y to symlink:"
+read -r symlink_bin
+if [ "$symlink_bin" = "y" ]; then
+    mkdir -p $HOME/bin
+    ln -s "$dotfile_repo_location/bin/* $HOME/bin/"
+fi
 
 colored_echo "Do you want to install tmux? y to install:"
 read -r tmux_install
@@ -104,9 +110,6 @@ if [ "$tmux_install" = "y" ]; then
         colored_echo "Downloading tmux plugin manager repository."
         git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm > /dev/null
     fi
-
-    mkdir -p $HOME/bin
-    ln -s "$dotfile_repo_location/bin/tmux_switch_session.sh $HOME/bin/"
 
     colored_echo "Tmux is setup, when opening tmux the next time press \"tmux prefix + I\" to install tmux plugins"
 fi
