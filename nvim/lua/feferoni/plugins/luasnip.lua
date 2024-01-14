@@ -45,6 +45,7 @@ return {
             end
         end, { silent = true })
 
+
         -- ls.filetype_extend("c", { "cdoc" })
         -- ls.filetype_extend("cpp", { "cppdoc" })
         -- ls.filetype_extend("python", { "pydoc" })

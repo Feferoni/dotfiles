@@ -37,7 +37,7 @@ return {
         'hrsh7th/cmp-cmdline',
         'L3MON4D3/LuaSnip',
     },
-    config = function ()
+    config = function()
         require('cmp').setup({
             sorting = {
                 comparators = {
@@ -63,6 +63,7 @@ return {
                         buffer = "[Buffer]",
                         nvim_lsp = "[LSP]",
                         luasnip = "[Snippet]",
+                        path = "[PATH]",
                     })[entry.source.name] or 0
                     item.dup = ({
                         vsnip = 0,
@@ -88,7 +89,7 @@ return {
                     name = 'nvim_lsp',
                 },
                 { name = 'luasnip' },
-                { name = "path" },
+                { name = 'path' },
             }, {
                 { name = 'buffer' },
             }),
@@ -107,7 +108,19 @@ return {
                 native_menu = false,
             },
         })
-        require("luasnip.loaders.from_vscode").lazy_load()
+
+
+        require("luasnip.loaders.from_vscode").lazy_load({
+            include = {
+                "c",
+                "cpp",
+                "python",
+                "lua",
+                "markdown",
+                "plantuml",
+                "shell"
+            }
+        })
 
     end
 }
