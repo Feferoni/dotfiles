@@ -14,6 +14,7 @@ function get_dotfile_json_entry() {
 
     local query=$1
     local jq_response=$(jq "$query" "$dotfile_path" | tr -d '"')
+    local jq_response=${jq_response/\$HOME/$HOME} # expanding HOME var
     echo "$jq_response"
 }
 function check_and_pull_repo() {
@@ -22,7 +23,6 @@ function check_and_pull_repo() {
     fi
 
     local dotfile_path=$(get_dotfile_json_entry '.dotfile_path')
-    local dotfile_path=${dotfile_path/\$HOME/$HOME} # expanding HOME var
 
     if [ -z "$dotfile_path" ] || [ ! -d "$dotfile_path" ] || [ ! -d "$dotfile_path/.git" ]; then
         echo "Invalid or nonexistent dotfile path: $dotfile_path"
@@ -47,7 +47,6 @@ is_wsl() {
     grep -qic Microsoft /proc/version
 }
 
-
 ######################################################################################
 ### Exports
 ######################################################################################
@@ -68,6 +67,7 @@ export CC=$(which clang)
 export CXX=$(which clang++)
 export ZSH="$HOME/.oh-my-zsh"
 export BROWSER_PATH="firefox"
+export GIT_FOLDER_PATH=$(get_dotfile_json_entry '.git_folder_path')
 
 ######################################################################################
 ### Aliases
@@ -117,4 +117,8 @@ if [ -z "${SOURCED_RC}" ] && is_wsl; then
     cd
 fi
 
-export SOURCED_RC=true
+if [ -z "${SOURCED_RC}" ]; then
+    export SOURCED_RC=true
+    tmux new -s default
+fi
+

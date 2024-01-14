@@ -16,7 +16,6 @@ else
 fi
 FPATH=$(printf '%s' "$FPATH" | tr -d '[:space:]')
 
-# Parse line:col
 IFS=':' a=("$FPATH")
 echo "$a"
 IFS=$OIFS
