@@ -13,7 +13,7 @@ dotfile_repo_location=$PWD
 
 if [ ! -f "$HOME/.dotfile_config.json" ]; then
    echo "Copying dotfile_config.json to home folder. Change config in here."
-   cp "$dotfile_repo_location/default_dotfile_config.json $HOME/.dotfile_config.json"
+   cp "$dotfile_repo_location/default_dotfile_config.json" "$HOME/.dotfile_config.json"
 fi
 
 is_wsl() {
@@ -49,7 +49,6 @@ install_with_apt() {
     sudo snap install pyright --classic
     sudo snap install gopls --classic
     pip install -u yapf jedi-language-server
-    done
 }
 
 install_pre_requisites() {
