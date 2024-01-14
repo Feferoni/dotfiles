@@ -1,4 +1,8 @@
 function check_and_pull_repo() {
+    if [ "$SOURCED_RC" = true ]; then
+        return 0
+    fi
+
     if [ ! -f "$HOME/.configRepoPath" ]; then
         echo "Setup the file $HOME/.configRepoPath with the path to the config repo."
         return 0
@@ -43,8 +47,14 @@ export CXX=$(which clang++)
 export ZSH="$HOME/.oh-my-zsh"
 
 is_wsl() {
-    grep -ic Microsoft /proc/version
+    grep -qic Microsoft /proc/version
 }
+
+if is_wsl; then
+    export BROWSER_PATH="/mnt/c/Program\ Files\ \(x86\)/Google/Chrome/Application/chrome.exe"
+else
+    export BROWSER_PATH="firefox"
+fi
 
 if command -v nvim &> /dev/null; then
   alias vim='nvim'
@@ -168,10 +178,10 @@ source $ZSH/oh-my-zsh.sh
 setopt noincappendhistory
 setopt nosharehistory
 
-if [ -z "${SOURCED_RC}" ] && [ "$(uname -r | grep -i microsoft)" ]; then
+if [ -z "${SOURCED_RC}" ] && is_wsl; then
     export PATH=$(echo "$PATH" | sed -e 's/:\/mnt[^:]*//g')
     export PATH=/mnt/c/Windows/System32:$PATH
     cd
 fi
 
-export SOURCED_RC="true"
+export SOURCED_RC=true
