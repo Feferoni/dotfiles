@@ -23,17 +23,8 @@ vim.keymap.set("n", "N", "Nzzzv")
 -- deletes the currently marked thing to the void register, then copies the new thing into that, will keep the old copy buffer after the delete
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
--- leader y to paste into the copy clipboard
-if require("feferoni.core.wsl_check").is_wsl() then
-    vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>")
-else
-    vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-end
-
-vim.keymap.set("n", "<leader>Y", [["+Y]])
-
 -- deletes the currently marked thing, and puts it into void register. Keeping the old copy buffer after the delete
-vim.keymap.set({"n", "v" }, "<leader>d", [["_d]])
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 -- does nothing
 vim.keymap.set("n", "Q", "<nop>")
@@ -70,17 +61,17 @@ vim.keymap.set("v", "<leader>SR", [["hy:%s/<C-r>h/<C-r>h/gc<left><left><left>]],
     { desc = '[S]earch and [R]eplace current selection with confirmation' })
 
 -- makes current file executable
-vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc='turn file into executable'})
+vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = 'turn file into executable' })
 
 -- uses telescope to check references
-vim.keymap.set('n', '<leader>gr', function() require('telescope.builtin').lsp_references({ noremap = true, silent = true }) end)
+vim.keymap.set('n', '<leader>gr',
+    function() require('telescope.builtin').lsp_references({ noremap = true, silent = true }) end)
 
-vim.keymap.set("i", "<M-.>", "copilot#Next()", {expr=true, silent=true, desc='Copilot next'})
-vim.keymap.set("i", "<M-,>", "copilot#Previous()", {expr=true, silent=true, desc='Copilot prev'})
-vim.keymap.set("i", "<M-->", "copilot#Dismiss()", {expr=true, silent=true, desc='Copilot dismiss'})
-vim.keymap.set("i", "<M-m>", "copilot#Suggest()", {expr=true, silent=true, desc='Copilot suggest'})
+vim.keymap.set("i", "<M-.>", "copilot#Next()", { expr = true, silent = true, desc = 'Copilot next' })
+vim.keymap.set("i", "<M-,>", "copilot#Previous()", { expr = true, silent = true, desc = 'Copilot prev' })
+vim.keymap.set("i", "<M-->", "copilot#Dismiss()", { expr = true, silent = true, desc = 'Copilot dismiss' })
+vim.keymap.set("i", "<M-m>", "copilot#Suggest()", { expr = true, silent = true, desc = 'Copilot suggest' })
 
--- source object
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
     vim.print("Resourced file")
@@ -91,9 +82,20 @@ local copy_text_to_clipboard = function(text)
     vim.fn.system(command)
 end
 
+if require("feferoni.core.wsl_check").is_wsl() then
+    vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>")
+else
+    vim.keymap.set({ "n" }, "<leader>y", [["+y]])
+    vim.keymap.set({ "n", "v" }, "<leader>Y", [["+Y]])
+    vim.keymap.set({ "n", "v" }, "yy", [["+yy"]], {})
+end
+
+vim.keymap.set("n", "<leader>Y", [["+Y]])
+
+
 vim.keymap.set("n", "<leader>cfp", function()
     local path = require('plenary.path')
     local current_file = path:new(vim.fn.expand('%:p'))
     local current_folder = tostring(current_file:parent())
     copy_text_to_clipboard(current_folder .. "/")
-end, { desc = '[C]opy [F]ile [P]ath'})
+end, { desc = '[C]opy [F]ile [P]ath' })

@@ -16,12 +16,19 @@ if [ ! -f "$HOME/.dotfile_config.json" ]; then
    cp "$dotfile_repo_location/default_dotfile_config.json" "$HOME/.dotfile_config.json"
 fi
 
+colored_echo "Do you want to symlink all scripts? y to symlink:"
+read -r symlink_bin
+if [ "$symlink_bin" = "y" ]; then
+    mkdir -p $HOME/bin
+    ln -s "${dotfile_repo_location%/}/bin/*" "$HOME/bin/"
+fi
+
 is_wsl() {
     grep -ic Microsoft /proc/version
 }
 
 install_with_apt() {
-    programs_to_install=(git curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh jq xclip ripgrep fzf ninja-build clang-tidy ccache)
+    programs_to_install=(git gawk curl gettext sed unzip make cmake pkg-config build-essential tmux luajit zsh jq xclip ripgrep fzf ninja-build clang-tidy ccache)
 
     colored_echo "Using apt-get to install packages..."
     sudo apt-get update
@@ -92,13 +99,6 @@ colored_echo "Do you want to install pre-requisites programs via packet manager?
 read -r install_pre
 if [ "$install_pre" = "y" ]; then
 	install_pre_requisites
-fi
-
-colored_echo "Do you want to symlink all scripts? y to symlink:"
-read -r symlink_bin
-if [ "$symlink_bin" = "y" ]; then
-    mkdir -p $HOME/bin
-    ln -s "$dotfile_repo_location/bin/* $HOME/bin/"
 fi
 
 colored_echo "Do you want to install tmux? y to install:"
