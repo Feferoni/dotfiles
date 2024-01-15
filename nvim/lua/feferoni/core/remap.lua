@@ -5,6 +5,12 @@ vim.g.mapleader = " "
 -- vim.o.selection = "exclusive"
 -- vim.o.virtualedit = "onemore"
 
+-- Unbind arrow keys to force vim controls
+vim.api.nvim_set_keymap('', '<Up>', '<Nop>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('', '<Down>', '<Nop>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('', '<Left>', '<Nop>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('', '<Right>', '<Nop>', {noremap = true, silent = true})
+
 -- Toggle wrap lines
 vim.keymap.set("n", "<F6>", ":set wrap!<cr>", { noremap = true, silent = true })
 vim.keymap.set('n', '<esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
