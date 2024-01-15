@@ -20,7 +20,7 @@ colored_echo "Do you want to symlink all scripts? y to symlink:"
 read -r symlink_bin
 if [ "$symlink_bin" = "y" ]; then
     mkdir -p $HOME/bin
-    ln -s "${dotfile_repo_location%/}/bin/*" "$HOME/bin/"
+    ln -s ${dotfile_repo_location%/}/bin/* "$HOME/bin/"
 fi
 
 is_wsl() {
