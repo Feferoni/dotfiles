@@ -11,30 +11,52 @@ if ! type fzf > /dev/null 2>&1; then
 	exit 1
 fi
 
-if [ -z "$GIT_FOLDER_PATH" ] || [ ! -d "$GIT_FOLDER_PATH" ]; then
-    tmux display-message "Git folder path faulty: $GIT_FOLDER_PATH"
-    exit 1
-fi
+# Declare an associative array
+declare -A project_dir_paths
+
+# Split GIT_FOLDER_PATH into an array
+IFS=':' read -ra git_folder_paths <<< "$GIT_FOLDER_PATH"
+
+echo $git_folder_paths
+
+for path in "${git_folder_paths[@]}"; do
+    if [ -d "$path" ]; then
+        while IFS= read -r dir; do
+            dir_name=$(basename "$dir")
+            project_dir_paths["$dir_name"]="$dir"
+        done < <(find "$path" -maxdepth 1 -type d | tail -n +2)
+    else
+        tmux display-message "Git folder path faulty: $path"
+        continue
+    fi
+done
+
+echo ${project_dir_paths[@]}
+
+project_directory_names=$(printf '%s\n' "${!project_dir_paths[@]}")
+
+echo ${project_directory_names}
 
 current_tmux_session=$(tmux display-message -p '#S')
 active_tmux_sessions=$(tmux ls | cut -d':' -f1)
-project_directories=$(find "$GIT_FOLDER_PATH" -maxdepth 1 -type d -printf "%f\n" | tail -n +2)
-chosen_dir=$(echo -e "$active_tmux_sessions\n$project_directories" | sort -u | fzf --info inline --multi --header "Switch TMUX session. Current: ${current_tmux_session}")
-if [ -z "$chosen_dir" ]; then
+combined_list=$(echo -e "$active_tmux_sessions\n${project_directory_names}" | sort -u)
+
+chosen=$(echo -e "$combined_list" | fzf --info inline --multi --header "Switch TMUX session. Current: ${current_tmux_session}")
+if [ -z "$chosen" ]; then
     tmux display-message "No directory chosen."
     exit 1
 fi
 
-if tmux has-session -t "$chosen_dir" 2>/dev/null; then
-    tmux switch-client -t "$chosen_dir" || tmux attach-session -t "$chosen_dir"
+if tmux has-session -t "$chosen" 2>/dev/null; then
+    tmux switch-client -t "$chosen" || tmux attach-session -t "$chosen"
 else
-    full_dir_path="${GIT_FOLDER_PATH%/}/$chosen_dir"
+    full_dir_path=${project_dir_paths[$chosen]}
     tmux display-message "$full_dir_path"
-    tmux new -s $chosen_dir -d
-    tmux send-keys -t "$chosen_dir" "cd \"$full_dir_path\"" C-m
-    tmux send-keys -t "$chosen_dir" "nvim ." C-m
-    tmux split-window -h -t "$chosen_dir"
-    tmux send-keys -t "$chosen_dir" "cd \"$full_dir_path\"" C-m
-    tmux switch-client -t "$chosen_dir"
+    tmux new -s $chosen -d
+    tmux send-keys -t "$chosen" "cd \"$full_dir_path\"" C-m
+    tmux send-keys -t "$chosen" "nvim ." C-m
+    tmux split-window -h -t "$chosen"
+    tmux send-keys -t "$chosen" "cd \"$full_dir_path\"" C-m
+    tmux switch-client -t "$chosen"
 fi
 

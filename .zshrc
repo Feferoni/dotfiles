@@ -12,9 +12,14 @@ function get_dotfile_json_entry() {
         return 0
     fi
 
+    local jq_args=()
+    if [ -n "$2" ]; then
+        jq_args+=($2)
+    fi
+
     local query=$1
-    local jq_response=$(jq "$query" "$dotfile_path" | tr -d '"')
-    local jq_response=${jq_response/\$HOME/$HOME} # expanding HOME var
+    local jq_response=$(jq "${jq_args[@]}" "$query" "$dotfile_path" | tr -d '"')
+    local jq_response=${jq_response//\$HOME/$HOME} # expanding HOME var
     echo "$jq_response"
 }
 function check_and_pull_repo() {
@@ -67,7 +72,7 @@ export CC=$(which clang)
 export CXX=$(which clang++)
 export ZSH="$HOME/.oh-my-zsh"
 export BROWSER_PATH="firefox"
-export GIT_FOLDER_PATH=$(get_dotfile_json_entry '.git_folder_path')
+export GIT_FOLDER_PATH=$(get_dotfile_json_entry '.git_folder_path | join(":")' -r)
 
 ######################################################################################
 ### Aliases
