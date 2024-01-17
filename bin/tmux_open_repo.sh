@@ -17,8 +17,6 @@ declare -A project_dir_paths
 # Split GIT_FOLDER_PATH into an array
 IFS=':' read -ra git_folder_paths <<< "$GIT_FOLDER_PATH"
 
-echo $git_folder_paths
-
 for path in "${git_folder_paths[@]}"; do
     if [ -d "$path" ]; then
         while IFS= read -r dir; do
@@ -31,12 +29,7 @@ for path in "${git_folder_paths[@]}"; do
     fi
 done
 
-echo ${project_dir_paths[@]}
-
 project_directory_names=$(printf '%s\n' "${!project_dir_paths[@]}")
-
-echo ${project_directory_names}
-
 current_tmux_session=$(tmux display-message -p '#S')
 active_tmux_sessions=$(tmux ls | cut -d':' -f1)
 combined_list=$(echo -e "$active_tmux_sessions\n${project_directory_names}" | sort -u)
