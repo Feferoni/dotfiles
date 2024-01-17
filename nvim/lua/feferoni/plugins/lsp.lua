@@ -167,7 +167,7 @@ return {
                     }
                     setup_lsp(server_name, opts)
                 end,
-                ["jsonlsp"] = function (server_name)
+                ["jsonls"] = function (server_name)
                     local opts = {
                         cmd = { "vscode-json-language-server", "--stdio" },
                         root_dir = require("lspconfig").util.find_git_ancestor,
