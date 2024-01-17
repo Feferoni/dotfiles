@@ -21,10 +21,12 @@ for path in "${git_folder_paths[@]}"; do
     if [ -d "$path" ]; then
         while IFS= read -r dir; do
             dir_name=$(basename "$dir")
+            if [[ $dir_name == .* ]]; then
+                continue
+            fi
             project_dir_paths["$dir_name"]="$dir"
         done < <(find "$path" -maxdepth 1 -type d | tail -n +2)
     else
-        tmux display-message "Git folder path faulty: $path"
         continue
     fi
 done
@@ -36,7 +38,6 @@ combined_list=$(echo -e "$active_tmux_sessions\n${project_directory_names}" | so
 
 chosen=$(echo -e "$combined_list" | fzf --info inline --multi --header "Switch TMUX session. Current: ${current_tmux_session}")
 if [ -z "$chosen" ]; then
-    tmux display-message "No directory chosen."
     exit 1
 fi
 
