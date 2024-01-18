@@ -1,5 +1,6 @@
 return {
     'L3MON4D3/LuaSnip',
+    event = "VeryLazy",
     build = "make install_jsregexp",
     version = "v2.1.1",
     dependencies = {
