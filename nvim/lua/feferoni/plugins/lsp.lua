@@ -35,10 +35,10 @@ local setup_lsp = function(server_name, opts)
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
     opts.capabilities = capabilities or {}
     opts.on_attach = function(client, _)
-        if client.support_method('textDocument/hover') then
+        if client.supports_method('textDocument/hover') then
             vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
         end
-        if client.support_method('textDocument/signature_help') then
+        if client.supports_method('textDocument/signature_help') then
             vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
         end
         on_attach_signature_help(client)
