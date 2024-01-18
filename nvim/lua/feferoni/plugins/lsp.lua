@@ -35,10 +35,35 @@ local setup_lsp = function(server_name, opts)
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
     opts.capabilities = capabilities or {}
     opts.on_attach = function(client, _)
+        if client.support_method('textDocument/hover') then
+            vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+        end
+        if client.support_method('textDocument/signature_help') then
+            vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+        end
         on_attach_signature_help(client)
     end
     local server = require("lspconfig")[server_name]
     server.setup(opts)
+end
+
+local setup_clangd = function(server_name)
+    server_name = server_name or "clangd"
+    local opts = {
+        cmd = {
+            "clangd",
+            "-j=10",
+            "--background-index",
+            "--all-scopes-completion",
+            "--header-insertion=never",
+            "--recovery-ast",
+            "--pch-storage=disk",
+            "--log=info",
+            "--clang-tidy",
+            "--enable-config",
+        },
+    }
+    setup_lsp(server_name, opts)
 end
 
 return {
@@ -167,7 +192,7 @@ return {
                     }
                     setup_lsp(server_name, opts)
                 end,
-                ["jsonls"] = function (server_name)
+                ["jsonls"] = function(server_name)
                     local opts = {
                         cmd = { "vscode-json-language-server", "--stdio" },
                         root_dir = require("lspconfig").util.find_git_ancestor,
@@ -178,21 +203,7 @@ return {
                     setup_lsp(server_name, opts)
                 end,
                 ["clangd"] = function(server_name)
-                    local opts = {
-                        cmd = {
-                            "clangd",
-                            "-j=10",
-                            "--background-index",
-                            "--all-scopes-completion",
-                            "--header-insertion=never",
-                            "--recovery-ast",
-                            "--pch-storage=disk",
-                            "--log=info",
-                            "--clang-tidy",
-                            "--enable-config",
-                        },
-                    }
-                    setup_lsp(server_name, opts)
+                    setup_clangd(server_name)
                 end,
                 ["jedi_language_server"] = function(server_name)
                     local opts = {
@@ -205,5 +216,6 @@ return {
             },
 
         })
+        setup_clangd()
     end
 }

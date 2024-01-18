@@ -47,9 +47,6 @@ vim.gmapleader = " "
 vim.g.base16_colorspace = 256
 vim.opt.colorcolumn = "150"
 
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
-
 vim.diagnostic.config({
     virtual_text = true,
     signs = true,
