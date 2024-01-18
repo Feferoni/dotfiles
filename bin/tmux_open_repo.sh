@@ -41,24 +41,13 @@ if [ -z "$chosen" ]; then
     exit 1
 fi
 
-send_key() {
-    tmux_session=$1
-    keys_to_send=$2
-
-    tmux send-keys -t $tmux_session -l "$keys_to_send"
-    tmux send-keys -t $tmux_session C-m
-}
-
 if tmux has-session -t "$chosen" 2>/dev/null; then
     tmux switch-client -t "$chosen" || tmux attach-session -t "$chosen"
 else
     full_dir_path=${project_dir_paths[$chosen]}
-    tmux display-message "$full_dir_path"
-    tmux new -s $chosen -d
-    send_key $chosen "cd $full_dir_path"
-    send_key $chosen "nvim ."
-    tmux split-window -h -t "$chosen"
-    send_key $chosen "cd $full_dir_path"
-    tmux switch-client -t "$chosen"
+    tmux new -s $chosen -d -c "$full_dir_path"
+    tmux switch-client -t $chosen
+    tmux send-keys "nvim ." "Enter"
+    tmux split-window -h -c "$full_dir_path"
 fi
 
