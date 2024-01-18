@@ -11,6 +11,11 @@ if ! type fzf > /dev/null 2>&1; then
 	exit 1
 fi
 
+convert_to_session_name() {
+    local dir_name="$1"
+    echo "${dir_name//./_}"
+}
+
 # Declare an associative array
 declare -A project_dir_paths
 
@@ -21,10 +26,8 @@ for path in "${git_folder_paths[@]}"; do
     if [ -d "$path" ]; then
         while IFS= read -r dir; do
             dir_name=$(basename "$dir")
-            if [[ $dir_name == .* ]]; then
-                continue
-            fi
-            project_dir_paths["$dir_name"]="$dir"
+            session_name=$(convert_to_session_name "$dir_name")
+            project_dir_paths["$session_name"]="$dir"
         done < <(find "$path" -maxdepth 1 -type d | tail -n +2)
     else
         continue
@@ -33,8 +36,7 @@ done
 
 project_directory_names=$(printf '%s\n' "${!project_dir_paths[@]}")
 current_tmux_session=$(tmux display-message -p '#S')
-active_tmux_sessions=$(tmux ls | cut -d':' -f1)
-combined_list=$(echo -e "$active_tmux_sessions\n${project_directory_names}" | sort -u)
+combined_list=$(echo -e "$tmux_sessions\n${project_directory_names}" | sort -u)
 
 chosen=$(echo -e "$combined_list" | fzf --info inline --multi --header "Switch TMUX session. Current: ${current_tmux_session}")
 if [ -z "$chosen" ]; then
