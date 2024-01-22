@@ -39,7 +39,7 @@ CURRENT_WINDOW_ID=$(tmux display-message -p '#{window_index}')
 #   win_id
 #   pane_id
 remote_open() {
-  nvim --server "$1" --remote-send "<esc>:e $FILE<cr>"
+  nvim --server "$1" --remote-send "<esc>:OpenFile $FILE<cr>"
   tmux selectw -t "$2" && tmux selectp -t "$3"
   exit 0
 }
@@ -77,6 +77,4 @@ if [[ $SOCK ]]; then
   remote_open $SOCK $WIN_ID $PANE_ID
 fi
 
-# No remote nvim, so just open in current pane
-tmux send-keys "nvim $FILE"
-tmux send-keys "C-m"
+tmux send-keys "nvim $FILE" "Enter"

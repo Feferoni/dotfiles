@@ -93,9 +93,8 @@ if require("feferoni.core.wsl_check").is_wsl() then
 else
     vim.keymap.set({ "n" }, "<leader>y", [["+y]])
     vim.keymap.set({ "n", "v" }, "<leader>Y", [["+Y]])
-    vim.keymap.set({ "n", "v" }, "yy", [["+yy"]], {})
 end
-
+vim.keymap.set({ "n", "v" }, "yy", [["+yy"]], {})
 vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 
