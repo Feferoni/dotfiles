@@ -123,7 +123,10 @@ return {
                     '--column',
                     '--smart-case'
                 },
-                file_ignore_pattern = { '^.git/' },
+                file_ignore_patterns = {
+                    '^.git/',
+                    '^.cache/',
+                },
                 -- layout_strategy = 'vertical',
                 file_sorter = sorters.get_fuzzy_file,
                 generic_sorter = sorters.get_generic_fuzzy_sorter,
