@@ -233,10 +233,7 @@ return {
             builtin.grep_string({ search = vim.fn.input("Grep > ") });
         end)
 
-        local telescope_prettier = require('feferoni.telescope_prettier')
-
-        vim.keymap.set('n', '<leader>sb', telescope_prettier.buffers_or_recent, { desc = '[ ] Find existing buffers' })
-
+        vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
         vim.keymap.set('n', '<leader>sf', function()
             local opts = {}
