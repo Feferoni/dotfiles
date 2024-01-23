@@ -237,7 +237,7 @@ return {
 
         vim.keymap.set('n', '<leader>sf', function()
             local opts = {}
-            opts.hidden = false
+            opts.hidden = true
             opts.no_ignore = true
             builtin.find_files(opts)
         end, { desc = '[S]earch [F]iles' })
