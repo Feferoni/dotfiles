@@ -24,8 +24,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', '<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
         nmap('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
         nmap('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-        nmap('n', 'K', vim.lsp.buf.hover, 'Hover Documentation')
-        nmap('n', '<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
+        nmap('n', 'Ö', vim.lsp.buf.hover, 'Hover Documentation')
+        nmap('n', '<M-ö>', vim.lsp.buf.signature_help, 'Signature Documentation')
         nmap('n', 'gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
         nmap('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
         nmap('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
@@ -45,6 +45,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', "<C-s>", function()
             vim.cmd('LspOverloadsSignature')
         end, "LspoverloadsSignature")
+        nmap('n', "<leader>lr", function ()
+            vim.cmd('LspRestart')
+        end, '[L]sp [R]estart')
     end,
 })
 
