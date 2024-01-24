@@ -68,7 +68,6 @@ end
 
 return {
     'neovim/nvim-lspconfig',
-    event = "VeryLazy",
     dependencies = {
         'williamboman/mason.nvim',
         'williamboman/mason-lspconfig.nvim',
@@ -168,9 +167,8 @@ return {
                         },
                         filetypes = {
                             "sh",
-                            "zsh"
-                        },
-                        settings = {
+                            "zsh",
+                            "conf"
                         },
                         single_file_support = true,
                     }
