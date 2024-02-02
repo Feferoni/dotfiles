@@ -168,6 +168,15 @@ return {
                     on_input_filter_cb = on_input_filter_cb,
                     attach_mappings = attach_mappings,
                 },
+                buffers = {
+                    path_display = filenameFirst,
+                },
+                live_grep = {
+                    path_display = filenameFirst,
+                },
+                lsp_reference = {
+                    path_display = filenameFirst,
+                },
             },
             extensions = {
                 fzf = {
