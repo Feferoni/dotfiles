@@ -105,8 +105,6 @@ return {
         'nvim-telescope/telescope-fzf-native.nvim',
         'nvim-tree/nvim-web-devicons',
     },
-    build =
-    'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build',
     config = function()
         local sorters = require('telescope.sorters')
         local previewers = require('telescope.previewers')
@@ -149,6 +147,7 @@ return {
                         ["<C-f>"] = actions.to_fuzzy_refine,
                         ["<C-h>"] = actions.cycle_history_prev,
                         ["<C-l>"] = actions.cycle_history_next,
+                        ["<C-s>"] = "which_key",
                     },
                 },
             },

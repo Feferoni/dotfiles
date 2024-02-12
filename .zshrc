@@ -48,6 +48,26 @@ function check_and_pull_repo() {
 }
 check_and_pull_repo
 
+declare -a PWD_HISTORY
+PWD_HISTORY_SIZE=50
+
+update_pwd_history() {
+    if [ "$PWD" != "${PWD_HISTORY[0]}" ]; then
+        PWD_HISTORY=("$PWD" "${PWD_HISTORY[@]}")
+        PWD_HISTORY=("${PWD_HISTORY[@]:0:$PWD_HISTORY_SIZE}")
+    fi
+}
+
+choose_from_pwd_history() {
+    local dir_selected=$(printf "%s\n" "${PWD_HISTORY[@]}" | fzf --height 100% --inline-info --no-sort --tiebreak=index --header "Your PWD history (current PWD: ${PWD})")
+    if [ -n "$dir_selected" ]; then
+        cd "$dir_selected" && zle reset-prompt
+    fi
+}
+zle -N pwd_hist choose_from_pwd_history
+
+chpwd() { update_pwd_history; }
+
 is_wsl() {
     grep -qic Microsoft /proc/version
 }
@@ -106,6 +126,7 @@ source $ZSH/oh-my-zsh.sh
 ######################################################################################
 bindkey '^o' kill-line
 bindkey '^b' clear-screen
+bindkey '\C-p' pwd_hist
 
 ######################################################################################
 ### Options
