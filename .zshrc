@@ -52,14 +52,14 @@ declare -a PWD_HISTORY
 PWD_HISTORY_SIZE=50
 
 update_pwd_history() {
-    if [ "$PWD" != "${PWD_HISTORY[0]}" ]; then
+    if [ "$PWD" != "${PWD_HISTORY[1]}" ]; then
         PWD_HISTORY=("$PWD" "${PWD_HISTORY[@]}")
         PWD_HISTORY=("${PWD_HISTORY[@]:0:$PWD_HISTORY_SIZE}")
     fi
 }
 
 choose_from_pwd_history() {
-    local dir_selected=$(printf "%s\n" "${PWD_HISTORY[@]}" | fzf --height 100% --inline-info --no-sort --tiebreak=index --header "Your PWD history (current PWD: ${PWD})")
+    local dir_selected=$(printf "%s\n" "${PWD_HISTORY[@]}" | tail -n +2 | fzf --height 100% --inline-info --no-sort --tiebreak=index --header "Your PWD history (current PWD: ${PWD})")
     if [ -n "$dir_selected" ]; then
         cd "$dir_selected" && zle reset-prompt
     fi
