@@ -45,7 +45,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', "<C-s>", function()
             vim.cmd('LspOverloadsSignature')
         end, "LspoverloadsSignature")
-        nmap('n', "<leader>lr", function ()
+        nmap('n', "<leader>lr", function()
             vim.cmd('LspRestart')
         end, '[L]sp [R]estart')
     end,
@@ -92,7 +92,8 @@ local setup_lsp = function(server_name, opts)
             vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
         end
         if client.supports_method('textDocument/signature_help') then
-            vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+            vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help,
+                { border = 'rounded' })
         end
         on_attach_signature_help(client)
     end
@@ -100,31 +101,11 @@ local setup_lsp = function(server_name, opts)
     server.setup(opts)
 end
 
-local setup_clangd = function(server_name)
-    server_name = server_name or "clangd"
-    local opts = {
-        cmd = {
-            "clangd",
-            "-j=10",
-            "--background-index",
-            "--all-scopes-completion",
-            "--header-insertion=never",
-            "--recovery-ast",
-            "--pch-storage=disk",
-            "--log=info",
-            "--clang-tidy",
-            "--enable-config",
-        },
-    }
-    setup_lsp(server_name, opts)
-end
-
 return {
     'neovim/nvim-lspconfig',
     event = "VeryLazy",
     dependencies = {
         'williamboman/mason.nvim',
-        'williamboman/mason-lspconfig.nvim',
         'neovim/nvim-lspconfig',
         'jose-elias-alvarez/null-ls.nvim',
         'p00f/clangd_extensions.nvim',
@@ -136,7 +117,6 @@ return {
     end,
     config = function()
         require("mason").setup()
-        require("mason-lspconfig").setup()
         require('fidget').setup({
             integration = {
                 ["nvim-tree"] = {
@@ -193,82 +173,74 @@ return {
                 border = "none",
             },
         })
-        require("mason-lspconfig").setup({
-            ensure_installed = {
-                "bashls",
-                "lua_ls",
-                "clangd",
-                "jedi_language_server",
-            },
-            handlers = {
-                function(server_name)
-                    local opts = {}
-                    setup_lsp(server_name, opts)
-                end,
-                ["cmake"] = function(server_name)
-                    local opts = {
-                        cmd = {
-                            "cmake-language-server"
-                        }
-                    }
-                    setup_lsp(server_name, opts)
-                end,
-                ["bashls"] = function(server_name)
-                    local opts = {
-                        cmd = {
-                            "bash-language-server",
-                            "start"
-                        },
-                        filetypes = {
-                            "sh",
-                            "zsh",
-                            "conf"
-                        },
-                        single_file_support = true,
-                    }
-                    setup_lsp(server_name, opts)
-                end,
-                ["lua_ls"] = function(server_name)
-                    local opts = {
-                        cmd = {
-                            "lua-language-server",
-                            "--stdio"
-                        },
-                        autostart = true,
-                        settings = {
-                            Lua = {
-                                diagnostics = {
-                                    globals = { 'vim' }
-                                }
-                            }
-                        }
-                    }
-                    setup_lsp(server_name, opts)
-                end,
-                ["jsonls"] = function(server_name)
-                    local opts = {
-                        cmd = { "vscode-json-language-server", "--stdio" },
-                        root_dir = require("lspconfig").util.find_git_ancestor,
-                        provideFormatter = true,
-                        files = { "json", "jsonc" },
-                        single_file_support = true,
-                    }
-                    setup_lsp(server_name, opts)
-                end,
-                ["clangd"] = function(server_name)
-                    setup_clangd(server_name)
-                end,
-                ["jedi_language_server"] = function(server_name)
-                    local opts = {
-                        cmd = { "jedi-language-server" },
-                        filetypes = { "python" },
-                        single_file_support = true,
-                    }
-                    setup_lsp(server_name, opts)
-                end,
-            },
 
+        setup_lsp("cmake", {
+            cmd = {
+                "cmake-language-server"
+            }
         })
-        setup_clangd()
+        setup_lsp("bashls", {
+            cmd = {
+                "bash-language-server",
+                "start"
+            },
+            filetypes = {
+                "sh",
+                "zsh",
+                "conf"
+            },
+            single_file_support = true,
+        })
+        setup_lsp("lua_ls", {
+            cmd = {
+                "lua-language-server",
+                "--stdio"
+            },
+            autostart = true,
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { 'vim' }
+                    }
+                }
+            }
+        })
+        setup_lsp("jsonls", {
+            cmd = { "vscode-json-language-server", "--stdio" },
+            root_dir = require("lspconfig").util.find_git_ancestor,
+            provideFormatter = true,
+            files = { "json", "jsonc" },
+            single_file_support = true,
+        })
+        setup_lsp("pyright", {
+            cmd = { "pyright-langserver", "--stdio" },
+            root_dir = require("lspconfig").util.find_git_ancestor,
+            filetypes = { "python" },
+            single_file_support = true,
+            settings = {
+                python = {
+                    analysis = {
+                        autoSearchPaths = true,
+                        useLibraryCodeForTypes = true,
+                        diagnosticMode = 'openFilesOnly',
+                    },
+                },
+            },
+        })
+        setup_lsp("clangd", {
+            cmd = {
+                "clangd",
+                "-j=10",
+                "--background-index",
+                "--all-scopes-completion",
+                "--header-insertion=never",
+                "--recovery-ast",
+                "--pch-storage=disk",
+                "--log=info",
+                "--clang-tidy",
+                "--enable-config",
+            },
+        })
+        vim.lsp.set_log_level("TRACE")
     end
 }
