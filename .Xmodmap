@@ -1,0 +1,16 @@
+!xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
+clear Lock
+keycode 66 = Mode_switch NoSymbol
+keycode 43 = h H Left
+keycode 44 = j J Down
+keycode 45 = k K Up
+keycode 46 = l L Right
+keycode 24 = q Q Escape
+keycode 25 = w W parenleft
+keycode 26 = e E parenright
+keycode 39 = s S braceleft
+keycode 40 = d D braceright
+keycode 53 = x X bracketleft
+keycode 54 = c C bracketright
+keycode 28 = t T apostrophe
+keycode 29 = y Y quotedbl
