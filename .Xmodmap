@@ -1,16 +1,57 @@
 !xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
 clear Lock
 keycode 66 = Mode_switch NoSymbol
+
+
+! Mappings
+! 1:  !  2:  "  3:  #  4:  %  5:     6:     7:  &  8:  =   9:  ?  0:
+! q: esc w:     e:  (  r:  )  t:  '  y:     u:  /  i:  \   o:     p:
+! a:  @  s:  $  d:  {  f:  }  g:     h:  <  j:  v  k:  ^   l:  >  ö:
+! z:     x:  [  c:  ]  v:  _  b:  <  n:  >  m:  |  ,:  ;   .:  :  -:
+
+
+! Number row
+keycode 10 = 1 exclam exclam
+keycode 11 = 2 quotedbl quotedbl
+keycode 12 = 3 numbersign numbersign
+keycode 13 = 4 currency percent
+keycode 14 = 5 percent percent
+keycode 15 = 6 ampersand ampersand
+keycode 16 = 7 slash slash
+keycode 17 = 8 parenleft equal
+keycode 18 = 9 parenright question
+
+! qwerty row
+keycode 24 = q Q Escape
+keycode 25 = w W
+keycode 26 = e E parenleft
+keycode 27 = r R parenright
+keycode 28 = t T apostrophe
+keycode 29 = y Y
+keycode 30 = u U slash
+keycode 31 = i I backslash
+keycode 32 = o O
+keycode 33 = p P
+
+! asdf row
+keycode 38 = a A at
+keycode 39 = s S dollar
+keycode 40 = d D braceleft
+keycode 41 = f F braceright
+keycode 42 = g G
 keycode 43 = h H Left
 keycode 44 = j J Down
 keycode 45 = k K Up
 keycode 46 = l L Right
-keycode 24 = q Q Escape
-keycode 25 = w W parenleft
-keycode 26 = e E parenright
-keycode 39 = s S braceleft
-keycode 40 = d D braceright
+
+! zxcv row
+keycode 52 = z Z
 keycode 53 = x X bracketleft
-keycode 54 = c C bracketright
-keycode 28 = t T apostrophe
-keycode 29 = y Y quotedbl
+keycode 54 = c c bracketright
+keycode 55 = v V
+keycode 56 = b B less
+keycode 57 = n N greater
+keycode 58 = m M bar
+keycode 59 = comma semicolon semicolon
+keycode 60 = period colon colon
+keycode 61 = minus underscore underscore
