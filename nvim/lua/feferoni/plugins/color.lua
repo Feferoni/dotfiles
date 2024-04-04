@@ -1,8 +1,13 @@
 local function SetColorScheme()
     vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
     vim.api.nvim_set_hl(0, "NormalFloat", { fg = "none", bg = "none" })
+
+    -- Custom highlighting for Copilot
     vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#83a598" })
     vim.api.nvim_set_hl(0, "CopilotAnnotation", { fg = "#83a598" })
+
+    -- This is for flash plugin color scheme
+    vim.api.nvim_set_hl(0, "CustomBackdrop", { fg = "none" })
 
     local set_theme_path = "$HOME/.config/tinted-theming/set_theme.lua"
     local is_set_theme_file_readable = vim.fn.filereadable(vim.fn.expand(set_theme_path)) == 1 and true or false
