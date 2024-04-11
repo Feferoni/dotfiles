@@ -101,6 +101,7 @@ end
 return {
     'nvim-telescope/telescope.nvim',
     dependencies = {
+        "nvim-telescope/telescope-live-grep-args.nvim",
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-fzf-native.nvim',
         'nvim-tree/nvim-web-devicons',
@@ -109,6 +110,7 @@ return {
         local sorters = require('telescope.sorters')
         local previewers = require('telescope.previewers')
         local actions = require('telescope.actions')
+        local lga_actions = require("telescope-live-grep-args.actions")
 
         require('telescope').setup {
             defaults = {
@@ -183,11 +185,23 @@ return {
                     override_generic_sorter = true,
                     override_file_sorter = true,
                     case_mode = "smart_case",
-                }
-            }
+                },
+                live_grep_args = {
+                    auto_quoting = true,
+                    mappings = { -- extend mappings
+                        i = {
+                            ["<C-o>"] = lga_actions.quote_prompt(),
+                            ["<C-e>"] = lga_actions.quote_prompt({ postfix = " --iglob !*test*" }),
+                            ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+                        },
+                    },
+                },
+            },
         }
 
+
         pcall(require('telescope').load_extension, 'fzf')
+        pcall(require('telescope').load_extension, 'live_grep_args')
 
         local builtin = require('telescope.builtin')
         vim.keymap.set('n', '<leader>/', function()
@@ -222,7 +236,9 @@ return {
         vim.keymap.set('n', '<leader>sa', builtin.resume, { desc = '[S]earch [A]gain' })
         vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
         vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-        vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+        vim.keymap.set('n', '<leader>sg', function()
+            require('telescope').extensions.live_grep_args.live_grep_args()
+        end, { desc = '[S]earch by [G]rep' })
         vim.keymap.set('v', '<leader>sg', function()
             vim.cmd('normal! "hy')
             local opts = {}
@@ -236,11 +252,6 @@ return {
         end, { desc = '[S]earch [S]tring - grep for string' })
         vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
         vim.keymap.set('n', '<leader>sm', ":Telescope harpoon marks<CR>", { desc = 'Harpoon [M]arks' })
-        -- maybe remove this?
-        vim.keymap.set('n', '<leader>ss', function()
-            builtin.grep_string({ search = vim.fn.input("Grep > ") });
-        end)
-
         vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
         vim.keymap.set('n', '<leader>sf', function()
