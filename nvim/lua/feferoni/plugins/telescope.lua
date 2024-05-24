@@ -111,6 +111,7 @@ return {
         local previewers = require('telescope.previewers')
         local actions = require('telescope.actions')
         local lga_actions = require("telescope-live-grep-args.actions")
+        -- local layout = require('telescope.actions.layout')
 
         require('telescope').setup {
             defaults = {
@@ -149,7 +150,9 @@ return {
                         ["<C-f>"] = actions.to_fuzzy_refine,
                         ["<C-h>"] = actions.cycle_history_prev,
                         ["<C-l>"] = actions.cycle_history_next,
+                        -- ["<C-p>"] = layout.toogle_preview,
                         ["<C-s>"] = "which_key",
+                        ["<C-d>"] = actions.delete_buffer,
                     },
                 },
             },
@@ -236,26 +239,31 @@ return {
         vim.keymap.set('n', '<leader>sa', builtin.resume, { desc = '[S]earch [A]gain' })
         vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
         vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+
         vim.keymap.set('n', '<leader>sg', function()
             require('telescope').extensions.live_grep_args.live_grep_args()
         end, { desc = '[S]earch by [G]rep' })
+
         vim.keymap.set('v', '<leader>sg', function()
             vim.cmd('normal! "hy')
-            local opts = {}
-            opts.default_text = vim.fn.getreg('h')
-            builtin.live_grep(opts)
+            require('telescope').extensions.live_grep_args.live_grep_args({ default_text = vim.fn.getreg('h') })
         end, { desc = '[S]earch with live [G]rep' })
-        vim.keymap.set('n', '<leader>ss', function()
-            local opts = {}
-            opts.search = vim.fn.input("Grep > ")
-            builtin.live_grep(opts)
-        end, { desc = '[S]earch [S]tring - grep for string' })
+
         vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
         vim.keymap.set('n', '<leader>sm', ":Telescope harpoon marks<CR>", { desc = 'Harpoon [M]arks' })
         vim.keymap.set('n', '<leader>sb', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
         vim.keymap.set('n', '<leader>sf', function()
             local opts = {}
+            opts.hidden = true
+            opts.no_ignore = true
+            builtin.find_files(opts)
+        end, { desc = '[S]earch [F]iles' })
+
+        vim.keymap.set('v', '<leader>sf', function()
+            vim.cmd('normal! "hy')
+            local opts = {}
+            opts.default_text = vim.fn.getreg('h')
             opts.hidden = true
             opts.no_ignore = true
             builtin.find_files(opts)

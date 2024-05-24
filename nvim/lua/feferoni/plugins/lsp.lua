@@ -17,12 +17,33 @@ vim.api.nvim_create_autocmd('LspAttach', {
             vim.lsp.buf.rename()
             vim.cmd("wa")
         end, '[R]e[n]ame')
+
         nmap('n', 'ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
         nmap('n', 'gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
         nmap('n', 'gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-        nmap('n', '<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+
+        nmap('n', '<leader>sr', function ()
+            opts = {}
+            opts.include_current_line = true
+            require('telescope.builtin').lsp_references(opts)
+        end, '[S]earch [R]eferences')
+        nmap('v', '<leader>sr', function ()
+            vim.cmd('normal! "hy')
+            opts = {}
+            opts.default_text = vim.fn.getreg('h')
+            opts.include_current_line = true
+            require('telescope.builtin').lsp_references(opts)
+        end, '[S]earch [R]eferences')
+
+        nmap('n', '<leader>ss', require('telescope.builtin').lsp_document_symbols, '[S]search [S]ymbols')
+        nmap('v', '<leader>ss', function ()
+            vim.cmd('normal! "hy')
+            opts = {}
+            opts.default_text = vim.fn.getreg('h')
+            require('telescope.builtin').lsp_document_symbols(opts)
+        end, '[S]search [S]ymbols')
+
         nmap('n', '<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
-        nmap('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
         nmap('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
         nmap('n', 'Ö', vim.lsp.buf.hover, 'Hover Documentation')
         nmap('n', '<M-ö>', vim.lsp.buf.signature_help, 'Signature Documentation')
