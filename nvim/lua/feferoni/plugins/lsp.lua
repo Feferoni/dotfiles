@@ -22,12 +22,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', 'gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
         nmap('n', 'gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
 
-        nmap('n', '<leader>sr', function ()
+        nmap('n', 'sr', function()
             opts = {}
             opts.include_current_line = true
             require('telescope.builtin').lsp_references(opts)
         end, '[S]earch [R]eferences')
-        nmap('v', '<leader>sr', function ()
+        nmap('v', 'sr', function()
             vim.cmd('normal! "hy')
             opts = {}
             opts.default_text = vim.fn.getreg('h')

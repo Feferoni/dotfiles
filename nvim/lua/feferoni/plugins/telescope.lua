@@ -269,6 +269,15 @@ return {
             builtin.find_files(opts)
         end, { desc = '[S]earch [F]iles' })
 
+        vim.keymap.set('v', '<leader>sf', function()
+            vim.cmd('normal! "hy')
+            local opts = {}
+            opts.default_text = vim.fn.getreg('h')
+            opts.hidden = true
+            opts.no_ignore = true
+            builtin.find_files(opts)
+        end, { desc = '[S]earch [F]iles' })
+
         vim.keymap.set('n', '<leader>sc', function()
             local opts = {}
             opts.cwd = '~/.config/nvim'
@@ -280,9 +289,25 @@ return {
             builtin.oldfiles(opts)
         end, { desc = '[?] Find recently opened files' })
 
-        vim.keymap.set('n', '<leader>sp', function()
+        vim.keymap.set('n', '<leader>gp', function()
             local opts = {}
             builtin.git_files(opts)
-        end, { desc = '[S]earch git [P]roject' })
+        end, { desc = '[G]it [P]roject' })
+
+        vim.keymap.set('n', '<leader>gc', function()
+            local opts = {}
+            builtin.git_commits(opts)
+        end, { desc = '[G]it [C]ommit' })
+
+        vim.keymap.set('n', '<leader>gb', function()
+            local opts = {}
+            opts.show_remote_tracking_branches = false
+            builtin.git_branches(opts)
+        end, { desc = '[G]it [B]ranch' })
+
+        vim.keymap.set('n', '<leader>gs', function()
+            local opts = {}
+            builtin.git_status(opts)
+        end, { desc = '[G]it [S]tatus' })
     end
 }
