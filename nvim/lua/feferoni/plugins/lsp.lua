@@ -36,7 +36,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end, '[S]earch [R]eferences')
 
         nmap('n', '<leader>ss', require('telescope.builtin').lsp_document_symbols, '[S]search [S]ymbols')
-        nmap('v', '<leader>ss', function ()
+        nmap('v', '<leader>ss', function()
             vim.cmd('normal! "hy')
             opts = {}
             opts.default_text = vim.fn.getreg('h')
@@ -107,6 +107,7 @@ local setup_lsp = function(server_name, opts)
     opts = opts or {}
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
     opts.capabilities = capabilities or {}
     opts.on_attach = function(client, _)
         if client.supports_method('textDocument/hover') then
@@ -262,6 +263,15 @@ return {
                 "--enable-config",
             },
         })
-        vim.lsp.set_log_level("TRACE")
+        setup_lsp("gopls", {
+            filetypes = { "go", "gomod", "gowork", "gotmpl" }
+        })
+        setup_lsp("htmx", {})
+        -- setup_lsp("eslint", {})
+        -- setup_lsp("tsserver", {})
+        -- setup_lsp("emmet_language_server", {})
+        setup_lsp("html", {})
+        setup_lsp("zls", {})
+        vim.lsp.set_log_level("off")
     end
 }
