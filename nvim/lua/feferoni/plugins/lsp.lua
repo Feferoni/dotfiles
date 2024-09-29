@@ -272,6 +272,7 @@ return {
         -- setup_lsp("emmet_language_server", {})
         setup_lsp("html", {})
         setup_lsp("zls", {})
+        setup_lsp("rust_analyzer", {})
         vim.lsp.set_log_level("off")
     end
 }
