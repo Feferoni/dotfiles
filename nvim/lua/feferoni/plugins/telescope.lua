@@ -241,7 +241,10 @@ return {
         vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
         vim.keymap.set('n', '<leader>sg', function()
-            require('telescope').extensions.live_grep_args.live_grep_args()
+            local opts = {}
+            opts.hidden = true
+            opts.no_ignore = true
+            require('telescope').extensions.live_grep_args.live_grep_args(opts)
         end, { desc = '[S]earch by [G]rep' })
 
         vim.keymap.set('v', '<leader>sg', function()
