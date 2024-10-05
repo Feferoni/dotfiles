@@ -1,3 +1,36 @@
+local function find_binaries_and_debug()
+    local handle, err = io.popen("fd -u -t x -p bin")
+    if not handle then
+        vim.notify("Failed to execute fd: " .. (err or "unknown error"), vim.log.levels.ERROR)
+        return
+    end
+    local result = handle:read("*a")
+    handle:close()
+
+    local paths = {}
+    for path in result:gmatch("[^\r\n]+") do
+        table.insert(paths, path)
+    end
+
+    vim.ui.select(paths, {
+        prompt = "Select binary to debug:",
+        format_item = function(item)
+            return vim.fn.fnamemodify(item, ":t") .. " (" .. item .. ")"
+        end,
+    }, function(choice)
+        if choice then
+            -- TODO: Need it to select workspace, cmake builds needs to have it in build/ for it to be correct.
+            -- While zig needs it to be just in root.
+            require('dap').run({
+                type = 'codelldb',
+                request = 'launch',
+                name = "Debug selected binary",
+                program = choice,
+            })
+        end
+    end)
+end
+
 return {
     "jay-babu/mason-nvim-dap.nvim",
     event = "VeryLazy",
@@ -31,7 +64,7 @@ return {
                             type = "python",
                             request = "launch",
                             program = "${file}",
-                            args = function ()
+                            args = function()
                                 local input_args = vim.fn.input('Script arguments: ')
                                 return vim.split(input_args, " ")
                             end
@@ -58,14 +91,15 @@ return {
                             type = 'codelldb',
                             request = 'launch',
                             program = function()
-                                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build/', 'file')
+                                return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
                             end,
-                            cwd = '${workspaceFolder}/build',
+                            cwd = '${workspaceFolder}/',
                             terminal = 'integrated',
                             stopOnEntry = false,
                             args = {},
                             sourceMap = {
-                                ["/home/feferoni/git/AOC_2023_CPP/build/src/"] = "/home/feferoni/git/AOC_2023_CPP/dep_cache/catch2-src/src/",
+                                ["/home/feferoni/git/AOC_2023_CPP/build/src/"] =
+                                "/home/feferoni/git/AOC_2023_CPP/dep_cache/catch2-src/src/",
                             }
                         }
 
@@ -161,10 +195,13 @@ return {
 
         dap.set_log_level('DEBUG')
 
+        -- Create a command to call this function
+        vim.api.nvim_create_user_command('DebugBinary', find_binaries_and_debug, {})
+
         vim.keymap.set("n", "<leader>b", ":lua require'dap'.toggle_breakpoint()<CR>")
         vim.keymap.set("n", "<leader>B", ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>")
         vim.keymap.set("n", "<F5>", function()
-            dap.continue()
+            vim.cmd("DebugBinary");
             if vim.fn['NvimTreeClose'] ~= nil then
                 vim.cmd('NvimTreeClose')
             end
@@ -174,5 +211,8 @@ return {
         vim.keymap.set("n", "<F3>", ":lua require'dap'.step_out()<CR>")
         vim.keymap.set("n", "<leader>dr", ":lua require'dap'.repl.open()<CR>")
         vim.keymap.set("n", "<leader>td", ":lua require'dap-go'.debug_test()<CR>")
+
+
+
     end
 }
