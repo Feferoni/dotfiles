@@ -298,9 +298,51 @@ return {
         end, { desc = '[G]it [P]roject' })
 
         vim.keymap.set('n', '<leader>gc', function()
-            local opts = {}
-            builtin.git_commits(opts)
-        end, { desc = '[G]it [C]ommit' })
+            local action_state = require('telescope.actions.state')
+            local status_map = {
+                ["M"] = "Modified",
+                ["A"] = "Added",
+                ["D"] = "Deleted",
+                ["R"] = "Renamed",
+                ["C"] = "Copied",
+                ["T"] = "Type Changed",
+                ["U"] = "Unmerged",
+                ["MM"] = "Modified in both branches"
+            }
+            require('telescope.builtin').git_commits({
+                attach_mappings = function(prompt_bufnr, _)
+                    actions.select_default:replace(function()
+                        local commit = action_state.get_selected_entry()
+                        actions.close(prompt_bufnr)
+
+                        local git_root = vim.fn.system('git rev-parse --show-toplevel'):gsub('\n', '')
+                        local files = vim.fn.systemlist('git show --pretty="" --name-status ' .. commit.value)
+                        local qf_entries = {}
+                        for _, file in ipairs(files) do
+                            local status, filename = file:match("([%a])%s+(.+)")
+                            if filename then
+                                local status_text = status_map[status] or status
+                                local file_path = git_root .. '/' .. filename
+                                table.insert(qf_entries, {
+                                    bufnr = vim.fn.bufnr(file_path, true),
+                                    filename = file_path,
+                                    text = " (" .. status_text .. ")",
+                                    lnum = 1,
+                                })
+                            end
+                        end
+
+                        P(commit)
+
+                        vim.fn.setloclist(0, qf_entries)
+
+                        vim.cmd('lopen')
+                    end)
+                    return true
+                end,
+                git_command = { "git", "log", "--pretty=oneline", "--abbrev-commit", "-n", "2000" },
+            })
+        end, { noremap = true, silent = true })
 
         vim.keymap.set('n', '<leader>gb', function()
             local opts = {}
@@ -310,7 +352,7 @@ return {
 
         vim.keymap.set('n', '<leader>gs', function()
             local opts = {}
-            builtin.git_status(opts)
+            require('telescope.builtin').git_commits(opts)
         end, { desc = '[G]it [S]tatus' })
     end
 }

@@ -7,10 +7,9 @@ keycode 66 = ISO_Level3_Shift NoSymbol
 
 ! Mappings
 ! 1:  !  2:  "  3:  #  4:  %  5:     6:     7:  &  8:  =   9:  ?  0:
-! q: esc w:     e:  (  r:  )  t:  '  y:     u:  /  i:  \   o:     p:
-! a:  @  s:  $  d:  {  f:  }  g:     h:  <  j:  v  k:  ^   l:  >  ö:
+! q: esc w:  (  e:  )  r:  '  t:     y:     u:  /  i:  \   o:     p:
+! a:  @  s:  {  d:  }  f:  $  g:     h:  <  j:  v  k:  ^   l:  >  ö:
 ! z:     x:  [  c:  ]  v:  _  b:  <  n:  >  m:  |  ,:  ;   .:  :  -:
-
 
 ! Number row
 keycode 10 = 1 exclam exclam
@@ -25,10 +24,10 @@ keycode 18 = 9 parenright question
 
 ! qwerty row
 keycode 24 = q Q Escape
-keycode 25 = w W
-keycode 26 = e E parenleft
-keycode 27 = r R parenright
-keycode 28 = t T apostrophe
+keycode 25 = w W parenleft
+keycode 26 = e E parenright
+keycode 27 = r R apostrophe
+keycode 28 = t T
 keycode 29 = y Y
 keycode 30 = u U slash
 keycode 31 = i I backslash
@@ -37,9 +36,9 @@ keycode 33 = p P
 
 ! asdf row
 keycode 38 = a A at
-keycode 39 = s S dollar
-keycode 40 = d D braceleft
-keycode 41 = f F braceright
+keycode 39 = s S braceleft
+keycode 40 = d D braceright
+keycode 41 = f F dollar
 keycode 42 = g G
 keycode 43 = h H Left
 keycode 44 = j J Down

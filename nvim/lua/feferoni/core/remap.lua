@@ -17,7 +17,7 @@ vim.keymap.set('n', '<esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
 
 -- Move selected block, auto indent if moved to inside a if block
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
 
 -- Move line below to end of current line
 vim.keymap.set("n", "J", "mzJ`z")
@@ -44,10 +44,12 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
 -- quick fix navigation, look more into this
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
+vim.keymap.set("n", "<leader>j", "<cmd>lnext<CR>zz")
+vim.keymap.set("n", "<leader>k", "<cmd>lprev<CR>zz")
+
+-- todo remap this to something that is not used
+-- vim.keymap.set("n", "<C-j>", "<cmd>cnext<CR>zz")
+-- vim.keymap.set("n", "<C-k>", "<cmd>cprev<CR>zz")
 
 -- Move half page down/up while keeping cursor in the middle
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
