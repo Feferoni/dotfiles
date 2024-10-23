@@ -110,7 +110,9 @@ return {
         local sorters = require('telescope.sorters')
         local previewers = require('telescope.previewers')
         local actions = require('telescope.actions')
+        local action_state = require('telescope.actions.state')
         local lga_actions = require("telescope-live-grep-args.actions")
+        local make_entry = require('telescope.make_entry')
         -- local layout = require('telescope.actions.layout')
 
         require('telescope').setup {
@@ -152,7 +154,7 @@ return {
                         ["<C-l>"] = actions.cycle_history_next,
                         -- ["<C-p>"] = layout.toogle_preview,
                         ["<C-s>"] = "which_key",
-                        ["<C-d>"] = actions.delete_buffer,
+                        ["<A-d>"] = actions.delete_buffer,
                     },
                 },
             },
@@ -180,6 +182,17 @@ return {
                 },
                 lsp_reference = {
                     path_display = filenameFirst,
+                },
+                git_status = {
+                    git_icons = {
+                        added = "A",
+                        changed = "M",
+                        copied = "C",
+                        deleted = "D",
+                        renamed = "R",
+                        unmerged = "U",
+                        untracked = "?",
+                    },
                 },
             },
             extensions = {
@@ -298,7 +311,6 @@ return {
         end, { desc = '[G]it [P]roject' })
 
         vim.keymap.set('n', '<leader>gc', function()
-            local action_state = require('telescope.actions.state')
             local status_map = {
                 ["M"] = "Modified",
                 ["A"] = "Added",
@@ -351,8 +363,7 @@ return {
         end, { desc = '[G]it [B]ranch' })
 
         vim.keymap.set('n', '<leader>gs', function()
-            local opts = {}
-            require('telescope.builtin').git_commits(opts)
+            require('telescope.builtin').git_status({})
         end, { desc = '[G]it [S]tatus' })
     end
 }
