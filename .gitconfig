@@ -7,7 +7,7 @@
 [pack]
 	windowMemory = 100m
 	SizeLimit = 100m
-	threads = 1
+	threads = 4
 	deltaCacheSize = 150m
 	window = 0
 [http]
@@ -28,6 +28,7 @@
     co = checkout
     br = branch -vv
     logg = log --graph --oneline --all
+    l = log --reverse --oneline
     df = diff
     ds = diff --staged
     cp = cherry-pick
