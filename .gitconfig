@@ -14,6 +14,9 @@
 	postbuffer = 524288000
 [push]
 	default = simple
+[pager]
+    branch = false
+    log = false
 [merge]
 	tool = nvim
 [alias]
