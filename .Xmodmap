@@ -1,7 +1,9 @@
 !xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'
 clear Lock
 
+! for linux via citrix, and remap of caps to f14 via powertools
 keycode 66 = ISO_Level3_Shift NoSymbol
+! When using pure linux
 !keycode 66 = Mode_switch NoSymbol
 
 

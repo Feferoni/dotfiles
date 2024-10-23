@@ -1,10 +1,4 @@
 # Setup linux env with useful programs and dotfiles
-Download git repository and run install script:
-```
-git clone https://github.com/Feferoni/dotfiles
-cd dotfiles
-./install.sh
-```
 
 # Useful commands
 ### Batch renaming of files
