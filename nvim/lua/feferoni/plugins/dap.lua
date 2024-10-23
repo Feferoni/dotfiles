@@ -31,6 +31,27 @@ local function find_binaries_and_debug()
     end)
 end
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "c", "cpp", "cc", "zig" },
+    callback = function()
+        vim.schedule(function()
+            vim.api.nvim_create_user_command('DebugBinary', find_binaries_and_debug, {})
+            vim.keymap.set("n", "<F5>", function()
+                vim.cmd("DebugBinary");
+                if vim.fn['NvimTreeClose'] ~= nil then
+                    vim.cmd('NvimTreeClose')
+                end
+            end)
+            vim.keymap.set("n", "<F1>", ":lua require'dap'.step_into()<CR>")
+            vim.keymap.set("n", "<F2>", ":lua require'dap'.step_over()<CR>")
+            vim.keymap.set("n", "<F3>", ":lua require'dap'.step_out()<CR>")
+            vim.keymap.set("n", "<F4>", ":lua require'dap'.continue()<CR>")
+            vim.keymap.set("n", "<leader>dr", ":lua require'dap'.repl.open()<CR>")
+            vim.keymap.set("n", "<leader>td", ":lua require'dap-go'.debug_test()<CR>")
+        end)
+    end,
+})
+
 return {
     "jay-babu/mason-nvim-dap.nvim",
     event = "VeryLazy",
@@ -195,25 +216,20 @@ return {
 
         dap.set_log_level('DEBUG')
 
-        -- Create a command to call this function
-        vim.api.nvim_create_user_command('DebugBinary', find_binaries_and_debug, {})
-
-        vim.keymap.set("n", "<leader>b", ":lua require'dap'.toggle_breakpoint()<CR>")
-        vim.keymap.set("n", "<leader>B", ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>")
         vim.keymap.set("n", "<F5>", function()
-            vim.cmd("DebugBinary");
+            vim.cmd([[lua require'dap'.continue()]])
             if vim.fn['NvimTreeClose'] ~= nil then
                 vim.cmd('NvimTreeClose')
             end
         end)
+        vim.keymap.set("n", "<leader>b", ":lua require'dap'.toggle_breakpoint()<CR>")
+        vim.keymap.set("n", "<leader>B",
+            ":lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>")
         vim.keymap.set("n", "<F1>", ":lua require'dap'.step_into()<CR>")
         vim.keymap.set("n", "<F2>", ":lua require'dap'.step_over()<CR>")
         vim.keymap.set("n", "<F3>", ":lua require'dap'.step_out()<CR>")
         vim.keymap.set("n", "<F4>", ":lua require'dap'.continue()<CR>")
         vim.keymap.set("n", "<leader>dr", ":lua require'dap'.repl.open()<CR>")
         vim.keymap.set("n", "<leader>td", ":lua require'dap-go'.debug_test()<CR>")
-
-
-
     end
 }

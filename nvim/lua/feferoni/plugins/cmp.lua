@@ -42,9 +42,9 @@ return {
         require('cmp').setup({
             sorting = {
                 comparators = {
+                    require('cmp').config.compare.recently_used,
                     require('cmp').config.compare.offset,
                     require('cmp').config.compare.exact,
-                    require('cmp').config.compare.recently_used,
                     require('clangd_extensions.cmp_scores'),
                     require('cmp').config.compare.kind,
                     require('cmp').config.compare.sort_text,
