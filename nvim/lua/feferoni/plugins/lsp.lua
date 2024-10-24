@@ -277,6 +277,7 @@ return {
             filetypes = { "go", "gomod", "gowork", "gotmpl" }
         })
         setup_lsp("htmx", {})
+        setup_lsp("marksman", {})
         -- setup_lsp("eslint", {})
         -- setup_lsp("tsserver", {})
         -- setup_lsp("emmet_language_server", {})

@@ -1,5 +1,5 @@
 {
-    "dotfile_path" : "$HOME/git/dotfiles",
+    "dotfile_path": "$HOME/git/dotfiles",
     "git_folder_path": [
         "$HOME/git"
     ]
