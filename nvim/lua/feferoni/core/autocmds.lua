@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "lua",
     callback = function()
@@ -7,6 +8,16 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+---@diagnostic disable-next-line: missing-fields
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
+
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     pattern = { "*" },
     callback = function()
@@ -23,6 +34,7 @@ end
 
 local myGroup = vim.api.nvim_create_augroup("SetColor", { clear = true })
 
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_autocmd("VimEnter", {
     group = myGroup,
     callback = SetColor
