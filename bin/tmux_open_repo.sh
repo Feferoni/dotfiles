@@ -2,13 +2,13 @@
 
 tmux_sessions=$(tmux ls | cut -d':' -f1)
 if [ -z "$tmux_sessions" ]; then
-	echo "No active tmux sessions. Start it."
-	exit 1
+    echo "No active tmux sessions. Start it."
+    exit 1
 fi
 
 if ! type fzf > /dev/null 2>&1; then
-	tmux display-message "You don't have fzf, install it and rerun."
-	exit 1
+    tmux display-message "You don't have fzf, install it and rerun."
+    exit 1
 fi
 
 current_tmux_session=$(tmux display-message -p '#S')
@@ -18,7 +18,7 @@ if [ -z "$chosen" ]; then
     exit 1
 fi
 
-if tmux has-session -t "$chosen" 2>/dev/null; then
+if tmux has-session -t "$chosen" 2> /dev/null; then
     tmux switch-client -t "$chosen" || tmux attach-session -t "$chosen"
 else
     full_dir_path=${project_dir_paths[$chosen]}
@@ -27,4 +27,3 @@ else
     tmux send-keys "nvim ." "Enter"
     tmux split-window -h -c "$full_dir_path"
 fi
-
