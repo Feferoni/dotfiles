@@ -1,14 +1,4 @@
 ---@diagnostic disable-next-line: missing-fields
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "lua",
-    callback = function()
-        vim.schedule(function()
-            vim.cmd("setlocal tabstop=4 shiftwidth=4 expandtab")
-        end)
-    end,
-})
-
----@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
