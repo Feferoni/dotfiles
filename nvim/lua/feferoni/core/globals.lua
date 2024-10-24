@@ -35,4 +35,5 @@ local function toggleVerboseLogging()
     end
 end
 
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_user_command('ToggleVerboseLog', toggleVerboseLogging, {})

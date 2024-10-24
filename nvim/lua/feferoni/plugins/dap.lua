@@ -31,10 +31,12 @@ local function find_binaries_and_debug()
     end)
 end
 
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_autocmd("FileType", {
     pattern = { "c", "cpp", "cc", "zig" },
     callback = function()
         vim.schedule(function()
+            ---@diagnostic disable-next-line: missing-fields
             vim.api.nvim_create_user_command('DebugBinary', find_binaries_and_debug, {})
             vim.keymap.set("n", "<F5>", function()
                 vim.cmd("DebugBinary");

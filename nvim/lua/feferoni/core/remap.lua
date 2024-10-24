@@ -6,9 +6,13 @@ vim.g.mapleader = " "
 -- vim.o.virtualedit = "onemore"
 
 -- Unbind arrow keys to force vim controls
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_set_keymap('', '<Up>', '<Nop>', {noremap = true, silent = true})
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_set_keymap('', '<Down>', '<Nop>', {noremap = true, silent = true})
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_set_keymap('', '<Left>', '<Nop>', {noremap = true, silent = true})
+---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_set_keymap('', '<Right>', '<Nop>', {noremap = true, silent = true})
 
 -- Toggle wrap lines
