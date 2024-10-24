@@ -55,9 +55,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', '<leader>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end, '[W]orkspace [L]ist Folders')
-        nmap('n', '<leader>f', function()
-            vim.lsp.buf.format { async = true }
-        end, '[F]ormat file')
+        -- nmap('n', '<leader>f', function()
+        --     vim.lsp.buf.format { async = true }
+        -- end, '[F]ormat file')
         require("clangd_extensions.inlay_hints").setup_autocmd()
         require("clangd_extensions.inlay_hints").set_inlay_hints()
         nmap('n', '<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
@@ -131,7 +131,6 @@ return {
     dependencies = {
         'williamboman/mason.nvim',
         'neovim/nvim-lspconfig',
-        'jose-elias-alvarez/null-ls.nvim',
         'p00f/clangd_extensions.nvim',
         'Issafalcon/lsp-overloads.nvim',
         "j-hui/fidget.nvim",
@@ -146,11 +145,6 @@ return {
                 ["nvim-tree"] = {
                     enable = true,
                 },
-            },
-        })
-        require("null-ls").setup({
-            sources = {
-                require("null-ls").builtins.formatting.yapf,
             },
         })
         require("clangd_extensions").setup({
@@ -251,10 +245,10 @@ return {
             single_file_support = true,
         })
         setup_lsp("pyright", {
-            cmd = { "pyright-langserver", "--stdio" },
             root_dir = require("lspconfig").util.find_git_ancestor,
             filetypes = { "python" },
             single_file_support = true,
+            version = {},
             settings = {
                 python = {
                     analysis = {
