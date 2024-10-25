@@ -78,5 +78,32 @@ return {
         local parse = require("luasnip.util.parser").parse_snippet
         local ms = ls.multi_snippet
         local k = require("luasnip.nodes.key_indexer").new_key
+
+
+
+        local get_comment_prefix = function()
+            local comment_string = vim.bo.commentstring
+            return comment_string:match("^(.-)%%s") or comment_string
+        end
+
+        local function currentDate()
+            return os.date("%Y-%m-%d")
+        end
+
+        local function currentUsername()
+            return os.getenv("USER")
+        end
+
+        ls.add_snippets("all", {
+            s("TODO", {
+                f(get_comment_prefix, {}),
+                t(" TODO("),
+                f(currentUsername, {}),
+                t(") - "),
+                f(currentDate, {}),
+                t(" - "),
+                i(1, "COMMENT HERE"),
+            })
+        })
     end
 }
