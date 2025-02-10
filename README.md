@@ -1,10 +1,11 @@
 # Setup linux env with useful programs and dotfiles
 
-# Useful commands
+## Useful commands
 ### Batch renaming of files
 ```
 ls | grep \.png$ | sed 'p;s/\.png/\.jpg/' | xargs -n2 mv
 ```
+
 ### Search and replace in certain files
 Example with fd:
 ```
@@ -13,6 +14,24 @@ fd -e cpp -0 | xargs -0 sed -i 's/oldtext/newtext/g'
 Example with find:
 ```
 find . -type f -name "*.cpp" -print0 | xargs -0 sed -i 's/oldtext/newtext/g'
+```
+
+## Fixing so that ctrl+h does now overlap with ascii keycode for backspace
+### WSL
+Add this to the windows terminal settings file, by first pressing:
+```
+ctl+shift+,
+```
+then adding this snippet:
+```json
+{
+    "keybindings": [
+        {
+            "command": {"action": "sendInput", "input": "\u0017"},
+            "keys": "ctrl+backspace"
+        }
+    ]
+}
 ```
 
 ## Links

@@ -28,7 +28,8 @@
     co = checkout
     br = branch -vv
     logg = log --graph --oneline --all
-    l = log --reverse --oneline
+    log = log --reverse
+    l = log -10 --reverse --oneline
     df = diff
     ds = diff --staged
     cp = cherry-pick
