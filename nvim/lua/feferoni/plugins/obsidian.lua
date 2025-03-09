@@ -17,8 +17,12 @@ return {
     opts = {
         workspaces = {
             {
-                name = "personal",
-                path = "~/.config/vault/personal/",
+                name = "shared",
+                path = "~/.config/vault/shared/",
+            },
+            {
+                name = "local",
+                path = "~/.config/vault/local/",
             },
         },
         completion = {
