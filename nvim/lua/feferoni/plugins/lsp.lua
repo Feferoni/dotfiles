@@ -58,9 +58,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         -- nmap('n', '<leader>f', function()
         --     vim.lsp.buf.format { async = true }
         -- end, '[F]ormat file')
-        require("clangd_extensions.inlay_hints").setup_autocmd()
-        require("clangd_extensions.inlay_hints").set_inlay_hints()
-        nmap('n', '<leader>ti', require("clangd_extensions.inlay_hints").toggle_inlay_hints, '[T]oggle [I]nlay Hints')
         nmap('n', 'gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
         nmap('i', "<C-s>", function()
             vim.cmd('LspOverloadsSignature')
@@ -107,10 +104,15 @@ end
 
 local setup_lsp = function(server_name, opts)
     opts = opts or {}
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+    local capabilities = require('blink.cmp').get_lsp_capabilities()
+
+    -- local capabilities = vim.lsp.protocol.make_client_capabilities()
+    -- capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
     capabilities.textDocument.completion.completionItem.snippetSupport = true
     opts.capabilities = capabilities or {}
+
     opts.on_attach = function(client, _)
         if client.supports_method('textDocument/hover') then
             vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
@@ -147,50 +149,7 @@ return {
                 },
             },
         })
-        require("clangd_extensions").setup({
-            inlay_hints = {
-                inline = vim.fn.has("nvim-0.10") == 1,
-                only_current_line = true,
-                only_current_line_autocmd = { "CursorHold", "CursorMoved", "CursorMovedI" },
-                show_parameter_hints = true,
-                parameter_hints_prefix = "<- ",
-                other_hints_prefix = "=> ",
-                max_len_align = false,
-                max_len_align_padding = 1,
-                right_align = false,
-                right_align_padding = 7,
-                highlight = "Comment",
-                priority = 100,
-            },
-            ast = {
-                role_icons = {
-                    type = "🄣",
-                    declaration = "🄓",
-                    expression = "🄔",
-                    statement = ";",
-                    specifier = "🄢",
-                    ["template argument"] = "🆃",
-                },
-                kind_icons = {
-                    Compound = "🄲",
-                    Recovery = "🅁",
-                    TranslationUnit = "🅄",
-                    PackExpansion = "🄿",
-                    TemplateTypeParm = "🅃",
-                    TemplateTemplateParm = "🅃",
-                    TemplateParamObject = "🅃",
-                },
-                highlights = {
-                    detail = "Comment",
-                },
-            },
-            memory_usage = {
-                border = "none",
-            },
-            symbol_info = {
-                border = "none",
-            },
-        })
+        require("clangd_extensions").setup({})
 
         setup_lsp("cmake", {
             cmd = {
@@ -276,7 +235,7 @@ return {
         setup_lsp("gopls", {
             filetypes = { "go", "gomod", "gowork", "gotmpl" }
         })
-        setup_lsp("htmx", {})
+        -- setup_lsp("htmx", {})
         setup_lsp("marksman", {})
         -- setup_lsp("eslint", {})
         -- setup_lsp("tsserver", {})
