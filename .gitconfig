@@ -16,7 +16,7 @@
 	default = simple
 [pager]
     branch = false
-    log = false
+    log = true
 [merge]
 	tool = nvim
 [alias]
@@ -28,8 +28,8 @@
     co = checkout
     br = branch -vv
     logg = log --graph --oneline --all
-    log = log --reverse
-    l = log -10 --reverse --oneline
+    l = !git --no-pager log -10 --reverse
+    l1 = !git --no-pager log -10 --reverse --oneline
     df = diff
     ds = diff --staged
     cp = cherry-pick
