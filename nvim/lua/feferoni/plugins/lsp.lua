@@ -71,58 +71,17 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
-local on_attach_signature_help = function(client)
-    if client.server_capabilities.signatureHelpProvider then
-        require('lsp-overloads').setup(client, {
-            ui = {
-                border = "single",
-                height = nil,
-                width = nil,
-                wrap = true,
-                wrap_at = nil,
-                max_width = nil,
-                max_height = nil,
-                close_events = { "CursorMoved", "BufHidden", "InsertLeave" },
-                focusable = true,
-                focus = false,
-                offset_x = 0,
-                offset_y = 0,
-                floating_window_above_cur_line = false,
-                silent = true,
-            },
-            keymaps = {
-                next_signature = "<C-j>",
-                previous_signature = "<C-k>",
-                next_parameter = "<C-l>",
-                previous_parameter = "<C-h>",
-                close_signature = "<C-s>"
-            },
-            display_automatically = false,
-        })
-    end
-end
-
 local setup_lsp = function(server_name, opts)
     opts = opts or {}
 
     local capabilities = require('blink.cmp').get_lsp_capabilities()
 
-    -- local capabilities = vim.lsp.protocol.make_client_capabilities()
-    -- capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
     capabilities.textDocument.completion.completionItem.snippetSupport = true
     opts.capabilities = capabilities or {}
 
-    opts.on_attach = function(client, _)
-        if client.supports_method('textDocument/hover') then
-            vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
-        end
-        if client.supports_method('textDocument/signature_help') then
-            vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help,
-                { border = 'rounded' })
-        end
-        on_attach_signature_help(client)
-    end
+    -- opts.on_attach = function(client, _)
+    -- end
+
     local server = require("lspconfig")[server_name]
     server.setup(opts)
 end
@@ -134,7 +93,6 @@ return {
         'williamboman/mason.nvim',
         'neovim/nvim-lspconfig',
         'p00f/clangd_extensions.nvim',
-        'Issafalcon/lsp-overloads.nvim',
         "j-hui/fidget.nvim",
     },
     build = function()

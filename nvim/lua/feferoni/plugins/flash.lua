@@ -3,7 +3,7 @@ return {
     event = "VeryLazy",
     keys = {
         {
-            "ss",
+            "f",
             mode = { "x", "n", "o" },
             function()
                 require("flash").jump()
@@ -25,7 +25,7 @@ return {
                     "notify",
                     "noice",
                     "cmp_menu",
-                    function (win)
+                    function(win)
                         return not vim.api.nvim_win_get_config(win).focusable
                     end
                 }
