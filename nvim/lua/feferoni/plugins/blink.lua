@@ -6,9 +6,6 @@ return {
             "epwalsh/obsidian.nvim",
         },
         version = '*',
-
-        ---@module 'blink.cmp'
-        ---@type blink.cmp.Config
         opts = {
             keymap = {
                 preset = 'default', -- none, default

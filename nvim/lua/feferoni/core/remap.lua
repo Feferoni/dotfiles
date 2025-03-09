@@ -1,19 +1,4 @@
 vim.g.mapleader = " "
--- vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- use file tree instead
-
--- selection will extend up to but not including, the cursor position
--- vim.o.selection = "exclusive"
--- vim.o.virtualedit = "onemore"
-
--- Unbind arrow keys to force vim controls
----@diagnostic disable-next-line: missing-fields
-vim.api.nvim_set_keymap('', '<Up>', '<Nop>', {noremap = true, silent = true})
----@diagnostic disable-next-line: missing-fields
-vim.api.nvim_set_keymap('', '<Down>', '<Nop>', {noremap = true, silent = true})
----@diagnostic disable-next-line: missing-fields
-vim.api.nvim_set_keymap('', '<Left>', '<Nop>', {noremap = true, silent = true})
----@diagnostic disable-next-line: missing-fields
-vim.api.nvim_set_keymap('', '<Right>', '<Nop>', {noremap = true, silent = true})
 
 -- Toggle wrap lines
 vim.keymap.set("n", "<F6>", ":set wrap!<cr>", { noremap = true, silent = true })
@@ -21,7 +6,7 @@ vim.keymap.set('n', '<esc>', "<cmd>nohl<CR>", { noremap = true, silent = true })
 
 -- Move selected block, auto indent if moved to inside a if block
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 -- Move line below to end of current line
 vim.keymap.set("n", "J", "mzJ`z")
@@ -40,8 +25,12 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 vim.keymap.set("n", "Q", "<nop>")
 
 -- Diagnostic keymaps
-vim.keymap.set('n', 'gp', vim.diagnostic.goto_prev)
-vim.keymap.set('n', 'gn', vim.diagnostic.goto_next)
+vim.keymap.set('n', 'gp', function()
+    vim.diagnostic.jump({ count = -1 })
+end)
+vim.keymap.set('n', 'gn', function()
+    vim.diagnostic.jump({ count = 1 })
+end)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- Lsp keymaps
@@ -78,11 +67,6 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc =
 -- uses telescope to check references
 vim.keymap.set('n', '<leader>gr',
     function() require('telescope.builtin').lsp_references({ noremap = true, silent = true }) end)
-
-vim.keymap.set("i", "<M-.>", "copilot#Next()", { expr = true, silent = true, desc = 'Copilot next' })
-vim.keymap.set("i", "<M-,>", "copilot#Previous()", { expr = true, silent = true, desc = 'Copilot prev' })
-vim.keymap.set("i", "<M-->", "copilot#Dismiss()", { expr = true, silent = true, desc = 'Copilot dismiss' })
-vim.keymap.set("i", "<M-m>", "copilot#Suggest()", { expr = true, silent = true, desc = 'Copilot suggest' })
 
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")

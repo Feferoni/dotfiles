@@ -59,12 +59,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         --     vim.lsp.buf.format { async = true }
         -- end, '[F]ormat file')
         nmap('n', 'gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
-        nmap('i', "<C-s>", function()
-            vim.cmd('LspOverloadsSignature')
-        end, "LspoverloadsSignature")
-        nmap('n', "<C-s>", function()
-            vim.cmd('LspOverloadsSignature')
-        end, "LspoverloadsSignature")
         nmap('n', "<leader>lr", function()
             vim.cmd('LspRestart')
         end, '[L]sp [R]estart')
@@ -74,7 +68,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 local setup_lsp = function(server_name, opts)
     opts = opts or {}
 
-    local capabilities = require('blink.cmp').get_lsp_capabilities()
+    local capabilities = require('blink.cmp').get_lsp_capabilities(vim.lsp.protocol.make_client_capabilities())
 
     capabilities.textDocument.completion.completionItem.snippetSupport = true
     opts.capabilities = capabilities or {}
