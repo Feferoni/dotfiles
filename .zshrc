@@ -1,33 +1,12 @@
 ######################################################################################
 ### Functions
 ######################################################################################
-function get_dotfile_json_entry() {
-    local dotfile_path="$HOME/.dotfile_config.json"
-    if [ ! -f "$dotfile_path" ]; then
-        echo ""
-        return 0
-    fi
-    if ! command -v jq > /dev/null 2>&1; then
-        echo ""
-        return 0
-    fi
-
-    local jq_args=()
-    if [ -n "$2" ]; then
-        jq_args+=($2)
-    fi
-
-    local query=$1
-    local jq_response=$(jq "${jq_args[@]}" "$query" "$dotfile_path" | tr -d '"')
-    local jq_response=${jq_response//\$HOME/$HOME} # expanding HOME var
-    echo "$jq_response"
-}
 function check_and_pull_repo() {
     if [ "$SOURCED_RC" = true ]; then
         return 0
     fi
 
-    local dotfile_path=$(get_dotfile_json_entry '.dotfile_path')
+    local dotfile_path="$HOME/git/dotfiles/"
 
     if [ -z "$dotfile_path" ] || [ ! -d "$dotfile_path" ] || [ ! -d "$dotfile_path/.git" ]; then
         echo "Invalid or nonexistent dotfile path: $dotfile_path"
@@ -47,6 +26,19 @@ function check_and_pull_repo() {
     export DOTFILE_PATH=$dotfile_path
 }
 check_and_pull_repo
+
+history_search_fzf() {
+    local selected_command
+    selected_command=$(history -n 1 | awk '!seen[$0]++' | tac | fzf)
+
+    if [[ -n "$selected_command" ]]; then
+        BUFFER="$selected_command"
+        zle end-of-line
+        zle accept-line
+    fi
+    zle reset-prompt
+}
+zle -N history_search_fzf
 
 declare -a PWD_HISTORY
 PWD_HISTORY_SIZE=50
@@ -93,7 +85,6 @@ export CC=$(which clang)
 export CXX=$(which clang++)
 export ZSH="$HOME/.oh-my-zsh"
 export BROWSER_PATH="firefox"
-export GIT_FOLDER_PATH=$(get_dotfile_json_entry '.git_folder_path | join(":")' -r)
 
 ######################################################################################
 ### Aliases
@@ -117,7 +108,6 @@ ZSH_THEME="gentoo"
 plugins=(
     git
     history-substring-search
-    tmuxinator
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -128,6 +118,7 @@ source $ZSH/oh-my-zsh.sh
 bindkey '^o' kill-line
 bindkey '^b' clear-screen
 bindkey '\C-p' pwd_hist
+bindkey '^R' history_search_fzf
 bindkey '^H' backward-kill-word
 
 ######################################################################################
