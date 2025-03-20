@@ -55,9 +55,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', '<leader>wl', function()
             print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
         end, '[W]orkspace [L]ist Folders')
-        -- nmap('n', '<leader>f', function()
-        --     vim.lsp.buf.format { async = true }
-        -- end, '[F]ormat file')
+        nmap('n', '<leader>f', function()
+            vim.lsp.buf.format { async = true }
+        end, '[F]ormat file')
         nmap('n', 'gh', '<cmd>ClangdSwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
         nmap('n', "<leader>lr", function()
             vim.cmd('LspRestart')
@@ -177,21 +177,19 @@ return {
                 "--background-index",
                 "--all-scopes-completion",
                 "--header-insertion=never",
+                "--cross-file-rename",
                 "--recovery-ast",
                 "--pch-storage=disk",
                 "--log=info",
                 "--clang-tidy",
                 "--enable-config",
+                -- "--query-driver=/proj/rbsNodeIfStorage/nodeif/**/x86_64-wrs-linux-g*"
             },
         })
         setup_lsp("gopls", {
             filetypes = { "go", "gomod", "gowork", "gotmpl" }
         })
-        -- setup_lsp("htmx", {})
         setup_lsp("marksman", {})
-        -- setup_lsp("eslint", {})
-        -- setup_lsp("tsserver", {})
-        -- setup_lsp("emmet_language_server", {})
         setup_lsp("html", {})
         setup_lsp("zls", {})
         setup_lsp("rust_analyzer", {})

@@ -26,10 +26,12 @@ vim.keymap.set("n", "Q", "<nop>")
 
 -- Diagnostic keymaps
 vim.keymap.set('n', 'gp', function()
-    vim.diagnostic.jump({ count = -1 })
+    vim.diagnostic.goto_prev();
+    -- vim.diagnostic.jump({ count = -1 })
 end)
 vim.keymap.set('n', 'gn', function()
-    vim.diagnostic.jump({ count = 1 })
+    vim.diagnostic.goto_next();
+    -- vim.diagnostic.jump({ count = 1 })
 end)
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
