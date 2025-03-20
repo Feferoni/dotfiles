@@ -121,31 +121,33 @@ return {
             single_file_support = true,
         })
         setup_lsp("lua_ls", {
-            on_init = function(client)
-                if client.workspace_folders then
-                    local path = client.workspace_folders[1].name
-                    if vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc') then
-                        return
-                    end
-                end
-
-                client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
-                    runtime = {
-                        version = 'LuaJIT'
-                    },
-                    workspace = {
-                        checkThirdParty = false,
-                        library = {
-                            vim.env.VIMRUNTIME
-                        }
-                    }
-                })
-            end,
             settings = {
                 Lua = {
-                    disable = {
+                    runtime = {
+                        version = 'LuaJIT',
+                        pathStrict = true,
                     },
-                }
+                    diagnostics = {
+                        disable = { 'redundant-parameter', 'duplicate-set-field', },
+                    },
+                    hint = vim.fn.has('nvim-0.10') > 0 and {
+                        -- https://github.com/LuaLS/lua-language-server/wiki/Settings#hint
+                        enable = true,         -- inlay hints
+                        paramType = true,      -- Show type hints at the parameter of the function.
+                        paramName = "Literal", -- Show hints of parameter name (literal types only) at the function call.
+                        arrayIndex = "Auto",   -- Show hints only when the table is greater than 3 items, or the table is a mixed table.
+                        setType = true,        -- Show a hint to display the type being applied at assignment operations.
+                    } or nil,
+                    completion = { callSnippet = "Disable" },
+                    workspace = {
+                        maxPreload = 8000,
+                        checkThirdParty = false,
+                        library = {
+                            vim.env.VIMRUNTIME,
+                        }
+                    },
+                },
+
             }
         })
         setup_lsp("jsonls", {
