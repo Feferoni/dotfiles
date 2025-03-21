@@ -1,12 +1,5 @@
 local ns_highlight = vim.api.nvim_create_namespace "telescope.highlight"
 
-local function filenameFirst(_, path)
-    local tail = vim.fs.basename(path)
-    local parent = vim.fs.dirname(path)
-    if parent == "." then return tail end
-    return string.format("%s\t\t%s", tail, parent)
-end
-
 ---@diagnostic disable-next-line: missing-fields
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "TelescopeResults",
@@ -28,6 +21,14 @@ vim.api.nvim_create_autocmd("User", {
         end)
     end,
 })
+
+
+local function filenameFirst(_, path)
+    local tail = vim.fs.basename(path)
+    local parent = vim.fs.dirname(path)
+    if parent == "." then return tail end
+    return string.format("%s\t\t%s", tail, parent)
+end
 
 local parse_prompt = function(prompt)
     local first_colon_index = string.find(prompt, ":")
@@ -103,6 +104,7 @@ end
 
 return {
     'nvim-telescope/telescope.nvim',
+    event = "VeryLazy",
     dependencies = {
         "nvim-telescope/telescope-live-grep-args.nvim",
         'nvim-lua/plenary.nvim',
@@ -132,6 +134,9 @@ return {
                 file_ignore_patterns = {
                     '^.git/',
                     '^.cache/',
+                    '^doc_out/',
+                    'cache/clangd',
+                    'unit_test/gcov',
                 },
                 -- layout_strategy = 'vertical',
                 file_sorter = sorters.get_fuzzy_file,
@@ -299,9 +304,11 @@ return {
 
         vim.keymap.set('n', '<leader>sc', function()
             local opts = {}
-            opts.cwd = '~/.config/nvim'
+            opts.hidden = true
+            opts.no_ignore = true
+            opts.cwd = '/repo/git/dotfiles/'
             builtin.find_files(opts)
-        end, { desc = '[S]earch Nvim [C]onfig' })
+        end, { desc = '[S]earch [C]onfig' })
 
         vim.keymap.set('n', '<leader>?', function()
             local opts = {}

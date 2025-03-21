@@ -6,7 +6,7 @@
             "description": "Default Configuration",
             "hidden": true,
             "configureSettings": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "YES"
             }
         }
     ]

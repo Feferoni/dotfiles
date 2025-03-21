@@ -17,11 +17,6 @@ fi
 FPATH=$(printf '%s' "$FPATH" | tr -d '[:space:]')
 
 FILE=$FPATH
-# IFS=':' a=("$FPATH")
-# IFS=$OIFS
-# [ "${a[0]}" ] || { echo "You must supply a filename. Found ${a[0]}" && exit 1; }
-# FILE=$(realpath "${a[0]}")
-# [ "$FILE" ] || { echo "Couldn't open file ${a[0]}" >> && exit 1; }
 
 # Get all nvim listening sockets (default location)
 IFS=':' read -r -a LISTEN_SOCKS <<< "$(ls "${XDG_RUNTIME_DIR:-${TMPDIR}nvim.${USER}}"/**/nvim.*.0 2> /dev/null | tr '\n' ':')"

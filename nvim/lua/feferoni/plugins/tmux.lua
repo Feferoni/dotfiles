@@ -1,5 +1,6 @@
 return {
     "aserowy/tmux.nvim",
+    event = "VeryLazy",
     config = function()
         require('tmux').setup({
             copy_sync = {
@@ -57,7 +58,5 @@ return {
                 resize_step_y = 1,
             }
         })
-
-
     end
 }

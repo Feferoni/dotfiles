@@ -96,3 +96,7 @@ vim.keymap.set("n", "<leader>cfp", function()
     local current_folder = tostring(current_file:parent())
     copy_text_to_clipboard(current_folder .. "/")
 end, { desc = '[C]opy [F]ile [P]ath' })
+
+vim.keymap.set("n", "<leader>mn", function() vim.cmd("ObsidianNew") end, { desc = 'Obsidian [N]ew' })
+vim.keymap.set("n", "<leader>ms", function() vim.cmd("ObsidianSearch") end, { desc = 'Obsidian [S]earch' })
+vim.keymap.set("n", "<leader>mw", function() vim.cmd("ObsidianWorkspace") end, { desc = 'Obsidian [W]orkspace' })

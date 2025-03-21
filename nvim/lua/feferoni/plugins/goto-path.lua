@@ -1,13 +1,12 @@
 return {
     'Feferoni/goto-path.nvim',
     dependencies = {
-        'nvim-telescope/telescope.nvim',
     },
     config = function()
         local goto_path = require('goto-path')
         goto_path.setup()
 
-        vim.keymap.set('n', 'gf', function ()
+        vim.keymap.set('n', 'gf', function()
             local opts = {}
             opts.no_ignore = true
             opts.follow = true

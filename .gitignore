@@ -1,4 +1,5 @@
 nvim/plugin/*
+.luarc.json
 *.log
 nvim/lazy-lock.json
 vault/local/*

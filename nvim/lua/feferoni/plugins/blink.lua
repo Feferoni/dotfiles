@@ -5,6 +5,7 @@ return {
             'rafamadriz/friendly-snippets',
             "epwalsh/obsidian.nvim",
         },
+        event = "VeryLazy",
         version = '*',
         opts = {
             keymap = {

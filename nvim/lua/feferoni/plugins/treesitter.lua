@@ -2,7 +2,7 @@ return {
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     dependencies = {
-        'nvim-treesitter/playground',
+        -- 'nvim-treesitter/playground',
         'nvim-treesitter/completion-treesitter',
     },
     config = function()

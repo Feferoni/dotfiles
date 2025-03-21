@@ -185,7 +185,6 @@ return {
                 "--log=info",
                 "--clang-tidy",
                 "--enable-config",
-                -- "--query-driver=/proj/rbsNodeIfStorage/nodeif/**/x86_64-wrs-linux-g*"
             },
         })
         setup_lsp("gopls", {
