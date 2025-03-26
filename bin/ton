@@ -8,26 +8,33 @@ OIFS=$IFS
 # Check pipe from stdin or parameter
 FPATH=${STDIN:-$1}
 if [ "$1" ]; then
-    FPATH=$1
+  FPATH=$1
 elif read -r -t 2 STDIN; then
-    FPATH=$STDIN
+  FPATH=$STDIN
 else
-    echo "No file provided for opening" && exit 1
+  echo "No file provided for opening" && exit 1
 fi
 FPATH=$(printf '%s' "$FPATH" | tr -d '[:space:]')
 
-FILE=$FPATH
+IFS=':' a=("$FPATH")
+IFS=$OIFS
+[ "${a[0]}" ] || { echo "You must supply a filename. Found ${a[0]}" && exit 1; }
+FILE=$(eval echo "${a[0]}")
 
-# Get all nvim listening sockets (default location)
-IFS=':' read -r -a LISTEN_SOCKS <<< "$(ls "${XDG_RUNTIME_DIR:-${TMPDIR}nvim.${USER}}"/**/nvim.*.0 2> /dev/null | tr '\n' ':')"
+# Get all nvim listening sockets
+if [ -n "${XDG_RUNTIME_DIR}" ]; then
+    IFS=':' read -r -a LISTEN_SOCKS <<< "$(find "${XDG_RUNTIME_DIR}" -name "nvim.*.0" 2>/dev/null | tr '\n' ':')"
+else
+    IFS=':' read -r -a LISTEN_SOCKS <<< "$(find "/tmp/nvim.${USER}" -name "nvim.*.0" 2>/dev/null | tr '\n' ':')"
+fi
+
 IFS=$OIFS
 
-# Match child process with nvim sock, since process is within
-# e.g `/run/user/1000/nvim.1624238.0` -- nvim process is 1624238
 IFS=':' read -r -a panes <<< "$(tmux list-panes -a -F '#{session_name} #{window_index} #{pane_index} #{pane_pid}' | tr '\n' ':')"
 IFS=$OIFS
 
 CURRENT_WINDOW_ID=$(tmux display-message -p '#{window_index}')
+CURRENT_PANE_ID=$(tmux display-message -p '#{pane_id}')
 CURRENT_SESSION_NAME=$(tmux display-message -p '#{session_name}')
 
 # args:
@@ -35,44 +42,50 @@ CURRENT_SESSION_NAME=$(tmux display-message -p '#{session_name}')
 #   win_id
 #   pane_id
 remote_open() {
-    nvim --server "$1" --remote-send "<esc>:OpenFile $FILE<cr>"
-    tmux selectw -t "$2" && tmux selectp -t "$3"
-    exit 0
+  nvim --server "$1" --remote-send "<esc>:OpenFile $FILE<cr>"
+  tmux selectw -t "$2" && tmux selectp -t "$3"
+  exit 0
 }
 
+# Match child process with nvim sock, since process is within
+# e.g `/run/user/1000/nvim.1624238.0` -- nvim process is 1624238
 for pane in "${panes[@]}"; do
-    IFS=' ' pane_ids=($pane)
-    IFS=$OIFS
+  IFS=' ' pane_ids=($pane)
+  IFS=$OIFS
 
-    session_name=${pane_ids[0]}
-    win_id=${pane_ids[1]}
-    pane_id=${pane_ids[2]}
-    pid=${pane_ids[3]}
+  session_name=${pane_ids[0]}
+  win_id=${pane_ids[1]}
+  pane_id=${pane_ids[2]}
+  pid=${pane_ids[3]}
 
-    # Get pid of nvim process
-    cpid=$(pgrep -P "$pid" nvim)
-    ppid=0
-    if [ $cpid ]; then
-        # Get pid of nvim parent RPC process (--embed)
-        ppid=$(pgrep -P "$cpid" nvim)
+  # Get pid of nvim process
+  cpid=$(pgrep -P "$pid" nvim | tr -d '\n')
+  ppid=0
+  if [ $cpid ]; then
+    # Get pid of nvim parent RPC process (--embed)
+    ppid=$(pgrep -P "$cpid" nvim)
+  fi
+
+  for sock in "${LISTEN_SOCKS[@]}"; do
+    # Check if the nvim process associated with the socket is the parent id
+    # Prioritize instances running in the current window, but fallback to first found instance
+    if [[ $sock == *nvim.$ppid.* ]] &&
+       [[ $session_name == $CURRENT_SESSION_NAME ]] &&
+       [[ $win_id == $CURRENT_WINDOW_ID ]] &&
+       [[ $pane_id != $CURRENT_PANE_ID ]]; then
+
+      remote_open $sock $win_id $pane_id
+    elif [[ $sock == *nvim.$ppid.* ]] && [[ ! $SOCK ]]; then
+      SOCK=$sock
+      WIN_ID=$win_id
+      PANE_ID=$pane_id
     fi
-
-    for sock in "${LISTEN_SOCKS[@]}"; do
-        # Check if the nvim process associated with the socket is the parent id
-        # Prioritize instances running in the current window, but fallback to first found instance
-        if [[ $sock == *nvim.$ppid.* ]] && [[ $session_name == $CURRENT_SESSION_NAME ]] && [[ $win_id == $CURRENT_WINDOW_ID ]]; then
-
-            remote_open $sock $win_id $pane_id
-        elif [[ $sock == *nvim.$ppid.* ]] && [[ ! $SOCK ]]; then
-            SOCK=$sock
-            WIN_ID=$win_id
-            PANE_ID=$pane_id
-        fi
-    done
+  done
 done
 
 if [[ $SOCK ]]; then
-    remote_open $SOCK $WIN_ID $PANE_ID
+  remote_open $SOCK $WIN_ID $PANE_ID
 fi
 
 tmux send-keys "nvim $FILE" "Enter"
+

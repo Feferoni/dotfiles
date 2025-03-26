@@ -81,7 +81,7 @@ return {
                     'obsidian',
                 },
 
-                min_keyword_length = 2,
+                -- min_keyword_length = 2,
             },
 
             -- Blink.cmp uses a Rust fuzzy matcher by default for typo resistance and significantly better performance
