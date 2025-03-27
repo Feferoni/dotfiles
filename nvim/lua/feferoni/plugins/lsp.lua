@@ -86,7 +86,6 @@ return {
     dependencies = {
         'williamboman/mason.nvim',
         'neovim/nvim-lspconfig',
-        'p00f/clangd_extensions.nvim',
         "j-hui/fidget.nvim",
     },
     build = function()
@@ -101,7 +100,6 @@ return {
                 },
             },
         })
-        require("clangd_extensions").setup({})
 
         setup_lsp("cmake", {
             cmd = {
