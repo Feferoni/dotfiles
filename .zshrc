@@ -98,10 +98,15 @@ alias sb='source ~/.zshrc'
 ######################################################################################
 ### Themes
 ######################################################################################
-BASE16_SHELL_PATH="$HOME/.config/tinted-shell"
-[ -n "$PS1" ] \
-    && [ -s "$BASE16_SHELL_PATH/profile_helper.sh" ] \
-    && source "$BASE16_SHELL_PATH/profile_helper.sh"
+if [[ -n "${XDG_CONFIG_HOME}" ]]; then
+    if [ -f "${XDG_CONFIG_HOME}/tinted-shell/base16-shell.plugin.zsh" ]; then
+        . "${XDG_CONFIG_HOME}/tinted-shell/base16-shell.plugin.zsh"
+    fi
+else
+    if [ -f "$HOME/.config/tinted-shell/base16-shell.plugin.zsh" ]; then
+        . "$HOME/.config/tinted-shell/base16-shell.plugin.zsh"
+    fi
+fi
 
 ZSH_THEME="gentoo"
 
