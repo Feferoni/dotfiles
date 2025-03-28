@@ -23,7 +23,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', 'ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
         nmap('n', 'gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
         nmap('n', 'gi', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-
+        nmap('n', '<leader>i', function()
+            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ 0 }), { 0 })
+        end, 'Toggle [I]nlay hints')
         nmap('n', 'sr', function()
             opts = {}
             opts.include_current_line = true
