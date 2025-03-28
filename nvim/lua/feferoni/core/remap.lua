@@ -38,13 +38,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
 -- Lsp keymaps
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
--- quick fix navigation, look more into this
 vim.keymap.set("n", "<leader>j", "<cmd>lnext<CR>zz")
 vim.keymap.set("n", "<leader>k", "<cmd>lprev<CR>zz")
-
--- todo remap this to something that is not used
--- vim.keymap.set("n", "<C-j>", "<cmd>cnext<CR>zz")
--- vim.keymap.set("n", "<C-k>", "<cmd>cprev<CR>zz")
+vim.keymap.set("n", "<leader><down>", "<cmd>cnext<CR>zz")
+vim.keymap.set("n", "<leader><up>", "<cmd>cprev<CR>zz")
 
 -- Move half page down/up while keeping cursor in the middle
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
