@@ -47,18 +47,9 @@ vim.gmapleader = " "
 vim.g.base16_colorspace = 256
 vim.opt.colorcolumn = "150"
 
-vim.diagnostic.config({
-    virtual_text = true,
-    signs = true,
-    underline = true,
-    update_in_insert = false,
-    severity_sort = false,
-    float = {
-        focusable = false,
-        style = "minimal",
-        boarder = "rounded",
-        source = "always",
-        header = "",
-        prefix = "",
-    },
-})
+vim.o.foldmethod = 'expr'
+vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
+vim.o.foldlevelstart = -1
+vim.o.foldlevel = 50
+
+vim.diagnostic.config({ virtual_text = true, })

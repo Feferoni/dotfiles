@@ -27,9 +27,16 @@ vim.api.nvim_create_user_command(
 vim.api.nvim_create_autocmd('LspAttach', {
     desc = 'Sets up keybinds for when a file is attached to a LSP',
     group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-    callback = function(ev)
-        vim.bo[ev.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-        local opts = { buffer = ev.buf }
+    callback = function(args)
+        vim.bo[args.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+        local opts = { buffer = args.buf }
+
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client:supports_method('textDocument/foldingRange') then
+            local win = vim.api.nvim_get_current_win()
+            vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
+        end
+
 
         local nmap = function(mode, keys, func, desc)
             if desc then
@@ -124,6 +131,11 @@ return {
                 ["nvim-tree"] = {
                     enable = true,
                 },
+            },
+            notification = {
+                window = {
+                    winblend = 0,
+                }
             },
         })
 
