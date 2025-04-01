@@ -93,6 +93,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
             vim.lsp.buf.format { async = true }
         end, '[F]ormat file')
         nmap('n', 'gh', '<cmd>SwitchSourceHeader<cr>', '[G]oto [H]eader <-> source')
+        nmap('n', 'sh', function()
+            vim.cmd([[ShowHeirarchy]])
+        end, '[S]how [H] <-> source')
         nmap('n', "<leader>lr", function()
             vim.cmd('LspRestart')
         end, '[L]sp [R]estart')
