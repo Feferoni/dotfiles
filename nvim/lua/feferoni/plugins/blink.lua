@@ -3,7 +3,8 @@ return {
         'saghen/blink.cmp',
         dependencies = {
             'rafamadriz/friendly-snippets',
-            "epwalsh/obsidian.nvim",
+            'epwalsh/obsidian.nvim',
+            'L3MON4D3/LuaSnip',
         },
         event = "VeryLazy",
         version = '*',
@@ -56,7 +57,21 @@ return {
                     'obsidian_tags',
                     'obsidian',
                 },
-                -- min_keyword_length = 2,
+                providers = {
+                    lsp = {
+                        score_offset = 90,
+                    },
+                    path = {
+                        score_offset = 25,
+                        opts = {
+                            show_hidden_files_by_default = true,
+                        },
+                    },
+                    snippets = {
+                        score_offset = 40,
+                        min_keyword_length = 4,
+                    },
+                },
             },
             fuzzy = { implementation = "prefer_rust" },
             snippets = {

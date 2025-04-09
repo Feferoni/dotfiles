@@ -1,11 +1,6 @@
 return {
     'L3MON4D3/LuaSnip',
     event = "VeryLazy",
-    build = "make install_jsregexp",
-    version = "v2.1.1",
-    dependencies = {
-        'rafamadriz/friendly-snippets',
-    },
     config = function()
         local ls = require('luasnip')
         local types = require('luasnip.util.types')
@@ -54,6 +49,7 @@ return {
         -- ls.filetype_extend("cpp", { "cppdoc" })
         -- ls.filetype_extend("python", { "pydoc" })
         -- ls.filetype_extend("sh", { "shelldoc" })
+        require('luasnip.loaders.from_vscode').lazy_load()
 
         local s = ls.snippet
         local sn = ls.snippet_node
@@ -81,8 +77,6 @@ return {
         local parse = require("luasnip.util.parser").parse_snippet
         local ms = ls.multi_snippet
         local k = require("luasnip.nodes.key_indexer").new_key
-
-
 
         local get_comment_prefix = function()
             local comment_string = vim.bo.commentstring

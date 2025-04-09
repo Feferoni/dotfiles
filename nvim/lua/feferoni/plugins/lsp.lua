@@ -218,8 +218,6 @@ return {
                 "--background-index",
                 "--all-scopes-completion",
                 "--header-insertion=never",
-                "--cross-file-rename",
-                "--recovery-ast",
                 "--pch-storage=disk",
                 "--log=info",
                 "--clang-tidy",
@@ -233,6 +231,6 @@ return {
         setup_lsp("html", {})
         setup_lsp("zls", {})
         setup_lsp("rust_analyzer", {})
-        vim.lsp.set_log_level("off")
+        vim.lsp.set_log_level("debug")
     end
 }
