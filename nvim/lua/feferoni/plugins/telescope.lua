@@ -61,6 +61,11 @@ local getCnum = function(lnum, cnum, bufnr)
     end
 end
 
+local picker_location = {
+    line_number = nil,
+    col_number = nil,
+}
+
 local on_input_filter_cb = function(prompt)
     local find_colon = string.find(prompt, ":")
     if find_colon then
@@ -73,7 +78,9 @@ local on_input_filter_cb = function(prompt)
             end
             local win = picker.previewer.state.winid
             local bufnr = picker.previewer.state.bufnr
-            vim.api.nvim_win_set_cursor(win, { getLnum(lnum, bufnr), getCnum(lnum, cnum, bufnr) })
+            picker_location.line_number = getLnum(lnum, bufnr)
+            picker_location.col_number = getCnum(lnum, cnum, bufnr)
+            vim.api.nvim_win_set_cursor(win, { picker_location.line_number, picker_location.col_number })
             vim.api.nvim_buf_clear_namespace(bufnr, ns_highlight, 0, -1)
             vim.api.nvim_buf_add_highlight(bufnr, ns_highlight, "TelescopePreviewLine", lnum - 1, 0, -1)
             vim.api.nvim_buf_call(bufnr, function()
@@ -90,13 +97,16 @@ local attach_mappings = function()
     local actions = require('telescope.actions')
     actions.select_default:enhance {
         post = function()
-            local prompt = require("telescope.actions.state").get_current_line()
-            local find_colon = string.find(prompt, ":")
-            if find_colon then
-                local _, lnum, cnum = parse_prompt(prompt)
-                vim.api.nvim_win_set_cursor(0, { getLnum(lnum, 0), getCnum(lnum, cnum, 0) })
+            if picker_location.line_number then
+                if not picker_location.line_number then
+                    picker_location.col_number = 0
+                end
+                vim.api.nvim_win_set_cursor(0, { picker_location.line_number, picker_location.col_number })
                 vim.cmd("normal! zz")
             end
+
+            picker_location.line_number = nil
+            picker_location.col_number = nil
         end,
     }
     return true
