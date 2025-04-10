@@ -51,5 +51,3 @@ vim.o.foldmethod = 'expr'
 vim.o.foldexpr = 'v:lua.vim.lsp.foldexpr()'
 vim.o.foldlevelstart = -1
 vim.o.foldlevel = 50
-
-vim.diagnostic.config({ virtual_text = true, })

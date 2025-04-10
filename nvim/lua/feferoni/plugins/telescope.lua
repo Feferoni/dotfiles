@@ -137,6 +137,7 @@ return {
                     '^doc_out/',
                     'cache/clangd',
                     'unit_test/gcov',
+                    'atest.html.*',
                 },
                 -- layout_strategy = 'vertical',
                 file_sorter = sorters.get_fuzzy_file,

@@ -102,5 +102,11 @@ return {
                 i(1, "COMMENT HERE"),
             })
         })
+
+        ls.add_snippets("cpp", {
+            s("pragma_keep", {
+                t("// IWYU pragma: keep")
+            }),
+        })
     end
 }
