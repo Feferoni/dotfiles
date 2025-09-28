@@ -77,7 +77,7 @@ local copy_text_to_clipboard = function(text)
     vim.fn.system(command)
 end
 
-if require("feferoni.core.wsl_check").is_wsl() then
+if require("feferoni.core.user_functions.wsl_check").is_wsl() then
     vim.keymap.set({ "n", "v" }, "<leader>y", ":w !clip.exe<CR><CR>")
 else
     vim.keymap.set({ "n" }, "<leader>y", [["+y]])
