@@ -1,0 +1,26 @@
+# Modifier key
+:~$ CapsLock
+
+# Remap keys with parentheses
+!+s [
+!+d ]
+
+# Remap keys with braces
+!+x {
+!+c }
+
+# Remap keys with brackets
+!+w (
+!+e )
+
+# Remap keys with apostrophe and quotes
+!+t '
+!+y "
+
+# Escape key
+!+q Escape
+
+!+h Left
+!+j Down
+!+k Up
+!+l Right
