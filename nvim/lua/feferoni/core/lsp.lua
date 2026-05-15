@@ -1,4 +1,4 @@
-vim.lsp.set_log_level("error") -- debug, info, error, off
+vim.lsp.log.set_level("error") -- debug, info, error, off
 
 vim.diagnostic.config({
     signs = {
