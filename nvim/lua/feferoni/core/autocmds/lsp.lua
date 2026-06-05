@@ -108,8 +108,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         nmap('n', 'sh', function()
             vim.cmd([[ShowHeirarchy]])
         end, '[S]how [H] <-> source')
-        nmap('n', "<leader>lr", function()
-            vim.cmd('LspRestart')
-        end, '[L]sp [R]estart')
+        nmap('n', "<leader>ll", function()
+            vim.cmd('edit ' .. vim.lsp.get_log_path())
+        end, '[L]sp [L]og')
     end,
 })
