@@ -33,8 +33,21 @@ vim.keymap.set('n', 'gn', function()
     vim.diagnostic.goto_next();
     -- vim.diagnostic.jump({ count = 1 })
 end)
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float)
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist)
+
+vim.keymap.set("n", "<leader>e", function()
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local config = vim.api.nvim_win_get_config(win)
+        if config.relative ~= "" then -- it's a floating window
+            vim.api.nvim_set_current_win(win)
+            return
+        end
+    end
+    local _, win = vim.diagnostic.open_float({ focusable = true })
+    if win then vim.api.nvim_set_current_win(win) end
+end)
+vim.keymap.set('n', '<leader>ql', vim.diagnostic.setloclist)
+vim.keymap.set('n', '<leader>qh', vim.diagnostic.setqflist)
+
 -- Lsp keymaps
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
 
