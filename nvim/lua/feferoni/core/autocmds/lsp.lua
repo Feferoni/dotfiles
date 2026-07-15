@@ -43,12 +43,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
         local opts = { buffer = args.buf }
 
         local client = vim.lsp.get_client_by_id(args.data.client_id)
+
         fidget_lsp_progress(client, args.buf)
+
         if client:supports_method('textDocument/foldingRange') then
             local win = vim.api.nvim_get_current_win()
             vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
         end
-
 
         local nmap = function(mode, keys, func, desc)
             if desc then
@@ -71,9 +72,28 @@ vim.api.nvim_create_autocmd('LspAttach', {
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ 0 }), { 0 })
         end, 'Toggle [I]nlay hints')
         nmap('n', 'sr', function()
-            opts = {}
-            opts.include_current_line = true
-            require('telescope.builtin').lsp_references(opts)
+            local client = vim.lsp.get_clients({ bufnr = 0 })[1]
+            if not client then
+                vim.notify("No LSP client attached", vim.log.levels.WARN)
+                return
+            end
+            local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+            params.context = { includeDeclaration = true }
+            local results = vim.lsp.buf_request_sync(0, 'textDocument/references', params, 5000)
+            local has_results = false
+            if results then
+                for _, res in pairs(results) do
+                    if res.result and #res.result > 0 then
+                        has_results = true
+                        break
+                    end
+                end
+            end
+            if not has_results then
+                vim.notify("No references found", vim.log.levels.INFO)
+                return
+            end
+            require('telescope.builtin').lsp_references({ include_current_line = true })
         end, '[S]earch [R]eferences')
         nmap('v', 'sr', function()
             vim.cmd('normal! "hy')
