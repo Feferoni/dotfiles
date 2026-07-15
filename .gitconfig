@@ -40,3 +40,4 @@
     rbc = rebase --continue
     rba = rebase --abort
     rbs = rebase --skip
+    p = push
