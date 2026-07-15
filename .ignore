@@ -1,0 +1,9 @@
+.git/
+out/
+doc_out/
+build/
+build_coverage/
+testFramework/
+compile_commands.json
+.cache/
+*.cc.o
