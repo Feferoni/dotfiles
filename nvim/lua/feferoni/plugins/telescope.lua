@@ -30,6 +30,81 @@ local function filenameFirst(_, path)
     return string.format("%s\t\t%s", tail, parent)
 end
 
+local preferred_ext = {
+    lua = 1,
+    c = 1,
+    cc = 1,
+    cpp = 1,
+    cxx = 1,
+    h = 1,
+    hpp = 1,
+    hh = 1,
+    hxx = 1,
+    py = 2,
+    md = 3,
+    kz = 3,
+    txt = 3,
+    json = 3,
+    xml = 3,
+    cmake = 3,
+}
+
+local function filename_first_ordinal(make_entry_fn)
+    return function(entry)
+        local e = make_entry_fn(entry)
+        local original_ordinal = e.ordinal
+        local basename = vim.fs.basename(original_ordinal)
+        e.ordinal = basename .. " " .. original_ordinal
+        return e
+    end
+end
+
+local function filter_picker_by_path(prompt_bufnr, pattern, exclude)
+    local action_state = require('telescope.actions.state')
+    local picker = action_state.get_current_picker(prompt_bufnr)
+    local manager = picker.manager
+
+    local patterns = vim.split(pattern, "|")
+    local filtered = {}
+    for entry in manager:iter() do
+        local path = entry.filename or entry.path or ""
+        local matches = false
+        for _, p in ipairs(patterns) do
+            if path:find(p) then
+                matches = true
+                break
+            end
+        end
+        if (exclude and not matches) or (not exclude and matches) then
+            table.insert(filtered, entry)
+        end
+    end
+
+    local finders = require('telescope.finders')
+    picker:refresh(finders.new_table({
+        results = filtered,
+        entry_maker = function(e) return e end,
+    }), { reset_prompt = true })
+end
+
+local function attach_path_filter_mappings(prompt_bufnr, map)
+    map('i', '<C-e>', function()
+        local input = vim.fn.input('Exclude pattern: ')
+        if input ~= "" then
+            filter_picker_by_path(prompt_bufnr, input, true)
+        end
+    end, { desc = "Exclude pattern" })
+
+    map('i', '<C-i>', function()
+        local input = vim.fn.input('Include pattern: ')
+        if input ~= "" then
+            filter_picker_by_path(prompt_bufnr, input, false)
+        end
+    end, { desc = "Include pattern" })
+
+    return true
+end
+
 local parse_prompt = function(prompt)
     local first_colon_index = string.find(prompt, ":")
     local numbers_part = prompt:sub(first_colon_index + 1)
@@ -93,12 +168,12 @@ local on_input_filter_cb = function(prompt)
     return { prompt = prompt }
 end
 
-local attach_mappings = function()
+local goto_picker_location_on_select = function()
     local actions = require('telescope.actions')
     actions.select_default:enhance {
         post = function()
             if picker_location.line_number then
-                if not picker_location.line_number then
+                if not picker_location.col_number then
                     picker_location.col_number = 0
                 end
                 vim.api.nvim_win_set_cursor(0, { picker_location.line_number, picker_location.col_number })
@@ -112,11 +187,17 @@ local attach_mappings = function()
     return true
 end
 
+local attach_file_picker_mappings = function(prompt_bufnr, map)
+    attach_path_filter_mappings(prompt_bufnr, map)
+    goto_picker_location_on_select()
+    return true
+end
+
+
 return {
     'nvim-telescope/telescope.nvim',
     event = "VeryLazy",
     dependencies = {
-        "nvim-telescope/telescope-live-grep-args.nvim",
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-fzf-native.nvim',
         'nvim-tree/nvim-web-devicons',
@@ -126,8 +207,42 @@ return {
         local previewers = require('telescope.previewers')
         local actions = require('telescope.actions')
         local action_state = require('telescope.actions.state')
-        local lga_actions = require("telescope-live-grep-args.actions")
         local make_entry = require('telescope.make_entry')
+
+        local fzy_sorter = sorters.get_fzy_sorter()
+        local file_type_sorter = sorters.new({
+            scoring_function = function(self, prompt, line, entry)
+                local ordinal = entry.ordinal or ""
+                local basename = ordinal:match("^(%S+)") or ordinal
+                local full_path = ordinal:match("%s(.+)$") or ordinal
+
+                -- Score against filename first
+                local name_score = fzy_sorter.scoring_function(fzy_sorter, prompt, basename, entry)
+
+                local score
+                if name_score and name_score > 0 then
+                    -- Filename matches: use filename score
+                    score = name_score
+                else
+                    -- No filename match: try full path with a penalty
+                    local path_score = fzy_sorter.scoring_function(fzy_sorter, prompt, full_path, entry)
+                    if path_score and path_score > 0 then
+                        score = path_score + 20
+                    else
+                        return -1
+                    end
+                end
+
+                -- Boost preferred file types
+                local ext = basename:match("%.([^%.]+)$")
+                if ext and preferred_ext[ext] then
+                    score = score * 0.7
+                end
+
+                return score
+            end,
+            highlighter = fzy_sorter.highlighter,
+        })
         -- local layout = require('telescope.actions.layout')
 
         require('telescope').setup {
@@ -139,19 +254,26 @@ return {
                     '--with-filename',
                     '--line-number',
                     '--column',
-                    '--smart-case'
+                    '--smart-case',
+                    '--no-ignore-vcs',
+                    '--ignore-file=' .. vim.fn.expand('$XDG_CONFIG_HOME') .. '/ripgrep/ignore',
                 },
-                file_ignore_patterns = {
-                    '^.git/',
-                    '^.cache/',
-                    '^doc_out/',
-                    'cache/clangd',
-                    'unit_test/gcov',
-                    'atest.html.*',
-                },
+                -- file_ignore_patterns = {
+                --     '^.git/',
+                --     '^out/',
+                --     '^source/testFramework/',
+                --     '^.cache/',
+                --     '^hosttest/build/',
+                --     '^doc_out/',
+                --     'cache/clangd',
+                --     'unit_test/gcov',
+                --     'atest.html.*',
+                --     '%.cc.o',
+                --     'build/bin/',
+                --     'test/build_coverage/',
+                -- },
                 -- layout_strategy = 'vertical',
-                file_sorter = sorters.get_fuzzy_file,
-                generic_sorter = sorters.get_generic_fuzzy_sorter,
+                file_sorter = function() return file_type_sorter end,
                 file_previewer = previewers.vim_buffer_cat.new,
                 grep_previewer = previewers.vim_buffer_vimgrep.new,
                 qflist_previewer = previewers.vim_buffer_qflist.new,
@@ -180,27 +302,34 @@ return {
             pickers = {
                 git_files = {
                     path_display = filenameFirst,
+                    entry_maker = filename_first_ordinal(make_entry.gen_from_file({})),
                     on_input_filter_cb = on_input_filter_cb,
-                    attach_mappings = attach_mappings,
+                    attach_mappings = attach_file_picker_mappings,
                 },
                 oldfiles = {
                     path_display = filenameFirst,
+                    entry_maker = filename_first_ordinal(make_entry.gen_from_file({})),
                     on_input_filter_cb = on_input_filter_cb,
-                    attach_mappings = attach_mappings,
+                    attach_mappings = attach_file_picker_mappings,
                 },
                 find_files = {
+                    debounce = 200,
                     path_display = filenameFirst,
+                    entry_maker = filename_first_ordinal(make_entry.gen_from_file({})),
                     on_input_filter_cb = on_input_filter_cb,
-                    attach_mappings = attach_mappings,
+                    attach_mappings = attach_file_picker_mappings,
                 },
                 buffers = {
                     path_display = filenameFirst,
                 },
                 live_grep = {
+                    debounce = 200,
                     path_display = filenameFirst,
+                    attach_mappings = attach_path_filter_mappings,
                 },
-                lsp_reference = {
+                lsp_references = {
                     path_display = filenameFirst,
+                    attach_mappings = attach_path_filter_mappings,
                 },
                 git_status = {
                     git_icons = {
@@ -218,25 +347,14 @@ return {
                 fzf = {
                     fuzzy = true,
                     override_generic_sorter = true,
-                    override_file_sorter = true,
+                    override_file_sorter = false,
                     case_mode = "smart_case",
-                },
-                live_grep_args = {
-                    auto_quoting = true,
-                    mappings = { -- extend mappings
-                        i = {
-                            ["<C-o>"] = lga_actions.quote_prompt(),
-                            ["<C-e>"] = lga_actions.quote_prompt({ postfix = " --iglob !*test*" }),
-                            ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
-                        },
-                    },
                 },
             },
         }
 
 
         pcall(require('telescope').load_extension, 'fzf')
-        pcall(require('telescope').load_extension, 'live_grep_args')
 
         local builtin = require('telescope.builtin')
         vim.keymap.set('n', '<leader>/', function()
@@ -273,15 +391,14 @@ return {
         vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
         vim.keymap.set('n', '<leader>sg', function()
-            local opts = {}
-            opts.hidden = true
-            opts.no_ignore = true
-            require('telescope').extensions.live_grep_args.live_grep_args(opts)
+            builtin.live_grep({
+                additional_args = { '--hidden' },
+            })
         end, { desc = '[S]earch by [G]rep' })
 
         vim.keymap.set('v', '<leader>sg', function()
             vim.cmd('normal! "hy')
-            require('telescope').extensions.live_grep_args.live_grep_args({ default_text = vim.fn.getreg('h') })
+            builtin.live_grep({ default_text = vim.fn.getreg('h') })
         end, { desc = '[S]earch with live [G]rep' })
 
         vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -291,7 +408,7 @@ return {
         vim.keymap.set('n', '<leader>sf', function()
             local opts = {}
             opts.hidden = true
-            opts.no_ignore = true
+            opts.no_ignore_vcs = true
             builtin.find_files(opts)
         end, { desc = '[S]earch [F]iles' })
 
@@ -300,23 +417,14 @@ return {
             local opts = {}
             opts.default_text = vim.fn.getreg('h')
             opts.hidden = true
-            opts.no_ignore = true
-            builtin.find_files(opts)
-        end, { desc = '[S]earch [F]iles' })
-
-        vim.keymap.set('v', '<leader>sf', function()
-            vim.cmd('normal! "hy')
-            local opts = {}
-            opts.default_text = vim.fn.getreg('h')
-            opts.hidden = true
-            opts.no_ignore = true
+            opts.no_ignore_vcs = true
             builtin.find_files(opts)
         end, { desc = '[S]earch [F]iles' })
 
         vim.keymap.set('n', '<leader>sc', function()
             local opts = {}
             opts.hidden = true
-            opts.no_ignore = true
+            opts.no_ignore_vcs = true
             opts.cwd = '/repo/git/dotfiles/'
             builtin.find_files(opts)
         end, { desc = '[S]earch [C]onfig' })
@@ -365,7 +473,7 @@ return {
                             end
                         end
 
-                        P(commit)
+                        P(commit) -- TODO: debug print, remove
 
                         vim.fn.setloclist(0, qf_entries)
 
