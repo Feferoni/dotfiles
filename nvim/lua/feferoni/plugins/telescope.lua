@@ -194,6 +194,44 @@ local attach_file_picker_mappings = function(prompt_bufnr, map)
 end
 
 
+local function make_file_type_sorter()
+    local sorters = require('telescope.sorters')
+    local fzy_sorter = sorters.get_fzy_sorter()
+    return sorters.new({
+        scoring_function = function(self, prompt, line, entry)
+            local ordinal = entry.ordinal or ""
+            local basename = ordinal:match("^(%S+)") or ordinal
+            local full_path = ordinal:match("%s(.+)$") or ordinal
+
+            -- Score against filename first
+            local name_score = fzy_sorter.scoring_function(fzy_sorter, prompt, basename, entry)
+
+            local score
+            if name_score and name_score > 0 then
+                -- Filename matches: use filename score
+                score = name_score
+            else
+                -- No filename match: try full path with a penalty
+                local path_score = fzy_sorter.scoring_function(fzy_sorter, prompt, full_path, entry)
+                if path_score and path_score > 0 then
+                    score = path_score + 20
+                else
+                    return -1
+                end
+            end
+
+            -- Boost preferred file types
+            local ext = basename:match("%.([^%.]+)$")
+            if ext and preferred_ext[ext] then
+                score = score * 0.7
+            end
+
+            return score
+        end,
+        highlighter = fzy_sorter.highlighter,
+    })
+end
+
 return {
     'nvim-telescope/telescope.nvim',
     event = "VeryLazy",
@@ -209,42 +247,6 @@ return {
         local action_state = require('telescope.actions.state')
         local make_entry = require('telescope.make_entry')
 
-        local fzy_sorter = sorters.get_fzy_sorter()
-        local file_type_sorter = sorters.new({
-            scoring_function = function(self, prompt, line, entry)
-                local ordinal = entry.ordinal or ""
-                local basename = ordinal:match("^(%S+)") or ordinal
-                local full_path = ordinal:match("%s(.+)$") or ordinal
-
-                -- Score against filename first
-                local name_score = fzy_sorter.scoring_function(fzy_sorter, prompt, basename, entry)
-
-                local score
-                if name_score and name_score > 0 then
-                    -- Filename matches: use filename score
-                    score = name_score
-                else
-                    -- No filename match: try full path with a penalty
-                    local path_score = fzy_sorter.scoring_function(fzy_sorter, prompt, full_path, entry)
-                    if path_score and path_score > 0 then
-                        score = path_score + 20
-                    else
-                        return -1
-                    end
-                end
-
-                -- Boost preferred file types
-                local ext = basename:match("%.([^%.]+)$")
-                if ext and preferred_ext[ext] then
-                    score = score * 0.7
-                end
-
-                return score
-            end,
-            highlighter = fzy_sorter.highlighter,
-        })
-        -- local layout = require('telescope.actions.layout')
-
         require('telescope').setup {
             defaults = {
                 vimgrep_arguments = {
@@ -258,6 +260,7 @@ return {
                     '--no-ignore-vcs',
                     '--ignore-file=' .. vim.fn.expand('$XDG_CONFIG_HOME') .. '/ripgrep/ignore',
                 },
+                -- set file_ignore_patterns in the rg/fd config files instead
                 -- file_ignore_patterns = {
                 --     '^.git/',
                 --     '^out/',
@@ -272,8 +275,6 @@ return {
                 --     'build/bin/',
                 --     'test/build_coverage/',
                 -- },
-                -- layout_strategy = 'vertical',
-                file_sorter = function() return file_type_sorter end,
                 file_previewer = previewers.vim_buffer_cat.new,
                 grep_previewer = previewers.vim_buffer_vimgrep.new,
                 qflist_previewer = previewers.vim_buffer_qflist.new,
@@ -302,19 +303,20 @@ return {
             pickers = {
                 git_files = {
                     path_display = filenameFirst,
+                    file_sorter = make_file_type_sorter,
                     entry_maker = filename_first_ordinal(make_entry.gen_from_file({})),
                     on_input_filter_cb = on_input_filter_cb,
                     attach_mappings = attach_file_picker_mappings,
                 },
                 oldfiles = {
                     path_display = filenameFirst,
-                    entry_maker = filename_first_ordinal(make_entry.gen_from_file({})),
                     on_input_filter_cb = on_input_filter_cb,
                     attach_mappings = attach_file_picker_mappings,
                 },
                 find_files = {
                     debounce = 200,
                     path_display = filenameFirst,
+                    file_sorter = make_file_type_sorter,
                     entry_maker = filename_first_ordinal(make_entry.gen_from_file({})),
                     on_input_filter_cb = on_input_filter_cb,
                     attach_mappings = attach_file_picker_mappings,
