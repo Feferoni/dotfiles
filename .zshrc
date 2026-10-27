@@ -98,14 +98,16 @@ alias sb='source ~/.zshrc'
 ######################################################################################
 ### Themes
 ######################################################################################
-if [[ -n "${XDG_CONFIG_HOME}" ]]; then
-    if [ -f "${XDG_CONFIG_HOME}/tinted-shell/base16-shell.plugin.zsh" ]; then
-        . "${XDG_CONFIG_HOME}/tinted-shell/base16-shell.plugin.zsh"
-    fi
-else
-    if [ -f "$HOME/.config/tinted-shell/base16-shell.plugin.zsh" ]; then
-        . "$HOME/.config/tinted-shell/base16-shell.plugin.zsh"
-    fi
+TINTED_SHELL_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/tinted-shell"
+
+if [ -f "$TINTED_SHELL_DIR/base16-shell.plugin.zsh" ]; then
+    . "$TINTED_SHELL_DIR/base16-shell.plugin.zsh"
+fi
+
+# Apply the theme directly in the outer shell, before tmux starts
+if [[ -z "$TMUX" && -z "$SOURCED_RC" ]]; then
+    [ -f "$TINTED_SHELL_DIR/scripts/base16-rose-pine.sh" ] \
+        && source "$TINTED_SHELL_DIR/scripts/base16-rose-pine.sh"
 fi
 
 ZSH_THEME="gentoo"
